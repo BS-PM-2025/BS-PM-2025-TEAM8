@@ -1,0 +1,52 @@
+{% extends "ci_cd/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="intro-page">
+    <div class="intro-header">
+        <h1>📘 Introduction to CI/CD</h1>
+        <p>Understand the core concepts of Continuous Integration & Continuous Deployment.</p>
+    </div>
+
+    <div class="intro-body">
+        <img src="{% static 'img/ci_cd_diagram.jpg' %}" alt="CI/CD Flow" class="intro-img">
+        
+        <div class="intro-section">
+            <h3>🔧 What is CI?</h3>
+            <p>
+                Continuous Integration (CI) is the practice of automating the integration of code changes.
+                Developers frequently push code to a shared repository, where it's automatically tested and built.
+            </p>
+        </div>
+
+        <div class="intro-section">
+            <h3>🚀 What is CD?</h3>
+            <p>
+                Continuous Deployment (CD) ensures that code changes are automatically delivered to production 
+                after passing tests. This allows faster and more reliable delivery of features.
+            </p>
+        </div>
+
+        <div class="intro-section">
+            <h3>💡 Real-Life Example</h3>
+            <p>
+                Think of a developer pushing code → it triggers automated testing in Jenkins → if successful, 
+                Docker builds a container → then Kubernetes deploys it live. All hands-free!
+            </p>
+        </div>
+
+        <div class="intro-section">
+            <h3>🔗 Coming Soon</h3>
+            <ul>
+                <li>🎥 Embedded videos from instructors</li>
+                <li>🔗 GitHub practice repositories</li>
+                <li>📝 CI/CD challenges to try yourself</li>
+            </ul>
+        </div>
+
+        <div class="back-link">
+            <a href="{% url 'dashboard' %}">← Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

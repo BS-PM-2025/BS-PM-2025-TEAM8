@@ -1,0 +1,46 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CI/CD Platform{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+
+<body>
+    <header>
+        <nav>
+            {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="nav-left">
+                <a href="{% url 'home' %}">CI/CD Platform</a>
+            </div>
+            <div class="nav-right">
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'signup' %}">Sign Up</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+
+</html>

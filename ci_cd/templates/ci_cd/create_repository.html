@@ -1,0 +1,11 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+<div class="auth-container">
+    <h2>📁 Create a New Repository</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create Repository</button>
+    </form>
+</div>
+{% endblock %}

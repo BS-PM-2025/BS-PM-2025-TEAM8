@@ -1,0 +1,25 @@
+{% extends "ci_cd/base.html" %}
+
+{% block content %}
+<div class="auth-container">
+    {% if form.errors %}
+    <div class="form-errors">
+        <ul>
+            {% for field in form %}
+            {% for error in field.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <h2>Sign Up</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+</div>
+{% endblock %}

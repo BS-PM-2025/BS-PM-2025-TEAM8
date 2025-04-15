@@ -1,0 +1,24 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+<div class="auth-container">
+    <h2>Submit Repository for Feedback</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if feedback %}
+        <div class="feedback">
+            <h3>🔍 Feedback</h3>
+            {% if feedback.error %}
+                <p style="color: red;">{{ feedback.error }}</p>
+            {% else %}
+                <p><strong>Description:</strong> {{ feedback.description }}</p>
+                <p><strong>Stars:</strong> {{ feedback.stargazers }}</p>
+                <p><strong>README Present:</strong> {{ feedback.has_readme|yesno:"✅ Yes,❌ No" }}</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

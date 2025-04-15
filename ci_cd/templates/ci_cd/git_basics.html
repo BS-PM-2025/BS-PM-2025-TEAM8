@@ -1,0 +1,26 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+<div class="auth-container">
+    <h2>🔧 Git Basics</h2>
+    <p>This guide explains how to create your first Git repository and push code to GitHub.</p>
+
+    <h3>Step 1: Initialize a Git repository</h3>
+    <pre><code>git init</code></pre>
+
+    <h3>Step 2: Add your files</h3>
+    <pre><code>git add .</code></pre>
+
+    <h3>Step 3: Commit your changes</h3>
+    <pre><code>git commit -m "Initial commit"</code></pre>
+
+    <h3>Step 4: Connect to GitHub</h3>
+    <pre><code>git remote add origin https://github.com/your-username/your-repo.git</code></pre>
+
+    <h3>Step 5: Push your code</h3>
+    <pre><code>git push -u origin main</code></pre>
+
+    <p>Once pushed, you can submit this GitHub link for feedback!</p>
+
+    <a href="{% url 'dashboard' %}">← Back to Dashboard</a>
+</div>
+{% endblock %}

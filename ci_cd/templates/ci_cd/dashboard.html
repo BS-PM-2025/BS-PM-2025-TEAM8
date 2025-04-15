@@ -1,0 +1,88 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+
+<div class="dashboard-container">
+
+    <h2 class="greeting">👋 Welcome, {{ user.username }}!</h2>
+    <p class="intro">Here's your CI/CD learning dashboard.</p>
+
+    <!-- 📘 Learn CI/CD Link -->
+    <div class="section card">
+        <h3>📘 Learn CI/CD</h3>
+        <a href="{% url 'ci_cd_intro' %}" class="btn-learn">
+            📘 Start Learning About CI/CD
+        </a>
+    </div>
+
+    <!-- 📚 Enrolled Modules -->
+    <div class="section card">
+        <h3>📚 Enrolled Modules</h3>
+        {% if modules %}
+        <ul class="styled-list">
+            {% for module in modules %}
+            <a href="{% url 'module_detail' module.id %}" class="module-card">
+
+                <div class="module-info">
+                    <h4>{{ module.title }}</h4>
+                    <p>{{ module.description }}</p>
+                </div>
+            </a>
+
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>You are not enrolled in any modules yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- 💡 Git Basics Guide -->
+    <div class="section learn-section">
+        <a href="{% url 'git_basics' %}" class="btn-learn">
+            🔧 Learn How to Create a Git Repository
+        </a>
+    </div>
+
+
+    <!-- 🗂️ Repositories -->
+    <div class="section card">
+        <h3>🗂️ Your Git Repositories</h3>
+        {% if repos %}
+        <ul class="styled-list">
+            {% for repo in repos %}
+            <div class="repo-card">
+                <div class="repo-info">
+                    <strong>{{ repo.name }}</strong><br>
+                    <small>Created at {{ repo.created_at|date:"Y-m-d H:i" }}</small>
+                </div>
+            </div>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>You haven’t created any repositories yet.</p>
+        {% endif %}
+        <a href="{% url 'create_repo' %}" class="btn-create">➕ Create New Repository</a>
+    </div>
+
+
+    <!-- 📈 Progress -->
+    <div class="section progress-section">
+        <h3>📈 Your Progress</h3>
+        {% if total_exercises %}
+        <div class="progress-wrapper">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ progress_percent }}%;"></div>
+            </div>
+            <p>{{ completed }} of {{ total_exercises }} exercises completed ({{ progress_percent }}%)</p>
+        </div>
+        {% else %}
+        <p>No exercises yet.</p>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'cicd_logs' %}" class="btn-learn">🐞 View CI/CD Logs & Debugging</a>
+
+
+
+</div>
+
+{% endblock %}

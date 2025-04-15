@@ -1,0 +1,34 @@
+{% extends "ci_cd/base.html" %}
+
+{% block content %}
+<div class="auth-container">
+    <h2>{{ module.title }}</h2>
+    <p>{{ module.description }}</p>
+
+    <hr style="margin: 20px 0;">
+
+    <h3>🧪 Exercises:</h3>
+    {% if exercises %}
+    <ul class="styled-list">
+        {% for exercise in exercises %}
+        <li>
+            <strong>{{ exercise.title }}</strong><br>
+            <small>{{ exercise.description }}</small><br>
+            <em>Difficulty: {{ exercise.get_difficulty_display }}</em><br>
+
+            {% if exercise.id in completed_ids %}
+            ✅ Completed
+            {% else %}
+            <form method="POST" action="{% url 'mark_complete' exercise.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-complete">✅ Mark as Completed</button>
+            </form>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No exercises available yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
