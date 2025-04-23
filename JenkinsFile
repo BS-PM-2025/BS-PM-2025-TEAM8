@@ -1,30 +1,69 @@
 pipeline {
-    agent none
+    agent any
+
+    environment {
+        PIP_CACHE_DIR = '.pip-cache'
+    }
+
     stages {
-        stage('Build') {
-            agent {
-                docker {
-                    image 'python:2-alpine'
-                }
-            }
+        stage('Clone Repo') {
             steps {
-                sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+                echo '✅ Cloning repository...'
+                checkout scm
             }
         }
-        stage('Test') {
-            agent {
-                docker {
-                    image 'qnib/pytest'
-                }
-            }
+
+        stage('Install Requirements') {
             steps {
-                sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
+                echo '📦 Installing dependencies...'
+                sh '''
+                    python --version
+                    python -m venv venv
+                    source venv/bin/activate
+                    pip install -r requirements.txt
+                '''
             }
-            post {
-                always {
-                    junit 'test-reports/results.xml'
-                }
+        }
+
+        stage('Run Django Checks') {
+            steps {
+                echo '🔍 Running Django system checks...'
+                sh '''
+                    source venv/bin/activate
+                    python manage.py check
+                '''
+            }
+        }
+
+        stage('Run Migrations') {
+            steps {
+                echo '🔧 Running database migrations...'
+                sh '''
+                    source venv/bin/activate
+                    python manage.py makemigrations
+                    python manage.py migrate
+                '''
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo '🧪 Running tests...'
+                sh '''
+                    source venv/bin/activate
+                    python manage.py test
+                '''
             }
         }
     }
+
+    post {
+        success {
+            echo '🎉 Build succeeded!'
+        }
+        failure {
+            echo '❌ Build failed!'
+        }
+    }
 }
+
