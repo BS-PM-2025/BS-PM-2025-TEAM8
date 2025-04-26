@@ -322,24 +322,6 @@ nav a:hover {
     text-align: center;
 }
 
-.message {
-    padding: 12px 20px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-.message.success {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.message.error {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
 .repo-card {
     display: flex;
     align-items: center;
@@ -348,7 +330,7 @@ nav a:hover {
     padding: 15px;
     border-radius: 10px;
     margin-bottom: 15px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
 
 .repo-icon {
@@ -371,6 +353,43 @@ nav a:hover {
 }
 
 @keyframes fadeIn {
-    0% {opacity: 0; transform: translateY(10px);}
-    100% {opacity: 1; transform: translateY(0);}
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.messages {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.alert {
+    padding: 12px 18px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.alert.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert.warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.alert.error {
+    background-color: #f8d7da;
+    color: #721c24;
 }

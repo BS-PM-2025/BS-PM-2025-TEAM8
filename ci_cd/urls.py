@@ -28,5 +28,7 @@ urlpatterns = [
     path('exercise/<int:exercise_id>/complete/', views.mark_exercise_complete, name='mark_complete'),
     path("git-basics/", views.git_basics_view, name="git_basics"),
     path("cicd-logs/", views.cicd_logs_view, name="cicd_logs"),
+    path("test-message/", views.test_message),
+
 
 ]

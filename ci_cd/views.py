@@ -210,5 +210,11 @@ def create_repository_view(request):
 def cicd_logs_view(request):
     return render(request, "ci_cd/cicd_logs.html")
 
+def test_message(request):
+    messages.success(request, "🎉 This is a test success message!")
+    messages.warning(request, "⚠️ This is a test warning!")
+    messages.error(request, "❌ This is a test error!")
+    return redirect("dashboard")
+
 
 

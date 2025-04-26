@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        PIP_CACHE_DIR = '.pip-cache'
-    }
-
     stages {
         stage('Clone Repo') {
             steps {
@@ -12,58 +8,38 @@ pipeline {
                 checkout scm
             }
         }
-
         stage('Install Requirements') {
             steps {
                 echo '📦 Installing dependencies...'
-                sh '''
-                    python --version
-                    python -m venv venv
-                    source venv/bin/activate
-                    pip install -r requirements.txt
-                '''
+                sh 'python3 --version'  // ← changed to python3
+                sh 'pip3 install -r requirements.txt'  // ← changed to pip3
             }
         }
-
         stage('Run Django Checks') {
             steps {
-                echo '🔍 Running Django system checks...'
-                sh '''
-                    source venv/bin/activate
-                    python manage.py check
-                '''
+                echo '🔍 Checking Django project...'
+                sh 'python3 manage.py check'
             }
         }
-
         stage('Run Migrations') {
             steps {
-                echo '🔧 Running database migrations...'
-                sh '''
-                    source venv/bin/activate
-                    python manage.py makemigrations
-                    python manage.py migrate
-                '''
+                echo '📂 Running migrations...'
+                sh 'python3 manage.py migrate'
             }
         }
-
         stage('Run Tests') {
             steps {
                 echo '🧪 Running tests...'
-                sh '''
-                    source venv/bin/activate
-                    python manage.py test
-                '''
+                sh 'python3 manage.py test'
             }
         }
     }
-
     post {
         success {
-            echo '🎉 Build succeeded!'
+            echo '🎉 Build and tests succeeded!'
         }
         failure {
             echo '❌ Build failed!'
         }
     }
 }
-
