@@ -1,0 +1,27 @@
+{% extends "ci_cd/base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1>Welcome, {{ user.username }}!</h1>
+    <h2>Your Instructor Dashboard</h2>
+
+    <p>As an instructor, you can manage your courses, students, and repositories here.</p>
+
+    <!-- Manage Courses Section -->
+    <div class="dashboard-section card">
+        <h3>📚 Manage Courses</h3>
+        <p>Create and manage CI/CD courses and modules for your students.</p>
+        <a href="{% url 'create_module' %}" class="btn-learn">Create a New Course/Module</a>
+    </div>
+
+    <!-- Student Progress Section -->
+    
+
+    <!-- Manage Repositories Section -->
+    <h3>🗂️ Manage Repositories</h3>
+    <p>Manage repositories for course exercises and student submissions.</p>
+    <a href="{% url 'manage_repositories' %}" class="btn-create">View Your Repositories</a>
+    
+    
+</div>
+{% endblock %}
