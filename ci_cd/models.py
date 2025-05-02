@@ -3,6 +3,7 @@ from django.db import models
 
 # Custom User Model
 class User(AbstractUser):
+    is_instructor = models.BooleanField(default=False)
     groups = models.ManyToManyField(Group, related_name="ci_cd_users")
     user_permissions = models.ManyToManyField(Permission, related_name="ci_cd_users_permissions")
 
@@ -70,3 +71,9 @@ class Repository(models.Model):
     def __str__(self):
         return self.name
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    is_instructor = models.BooleanField(default=False)  # This field will determine if the user is an instructor
+
+    def __str__(self):
+        return f"{self.user.username} Profile"
