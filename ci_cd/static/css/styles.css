@@ -393,3 +393,273 @@ nav a:hover {
     background-color: #f8d7da;
     color: #721c24;
 }
+
+/* Available Modules Section */
+.module-card {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    background: #232323;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    border-left: 4px solid #00d8ff;
+    /* Blue for available modules */
+    color: #f0f0f0;
+}
+
+.module-card:hover {
+    background: #2e2e2e;
+    transform: translateY(-2px);
+}
+
+.module-info h4 {
+    font-size: 20px;
+    margin: 0 0 6px;
+    color: #00d8ff;
+    /* Blue for available modules */
+}
+
+.module-info p {
+    margin: 0;
+    font-size: 15px;
+    color: #ccc;
+}
+
+.module-info {
+    flex-grow: 1;
+}
+
+/* Enrolled Modules Section */
+.module-info h4 {
+    color: #4CAF50;
+    /* Green for enrolled modules */
+}
+
+/* Styling for the links in Available Modules */
+.module-card a {
+    color: inherit;
+    /* Make sure links don't override the color */
+    text-decoration: none;
+}
+
+/* Instructor Dashboard - Student Progress */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.styled-table th {
+    background-color: #3c9aab;
+    color: white;
+}
+
+.progress-bar {
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 8px;
+    height: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, #4caf50, #81c784);
+    transition: width 0.4s ease-in-out;
+}
+
+/* Dashboard Card Style */
+.dashboard-section.card {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    margin-bottom: 20px;
+}
+
+.dashboard-section.card h3 {
+    font-size: 22px;
+    color: #00d8ff;
+    margin-bottom: 15px;
+}
+
+.dashboard-section.card p {
+    color: #ccc;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+/* Style the Table for Student Progress */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.styled-table th, .styled-table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.styled-table th {
+    background-color: #3c9aab;
+    color: white;
+}
+
+/* Progress Bar Styling */
+.progress-bar {
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 8px;
+    height: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, #4caf50, #81c784);
+    transition: width 0.4s ease-in-out;
+}
+
+/* Manage Repositories Section */
+.manage-repositories-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.manage-repositories-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.manage-repositories-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+.manage-repositories-container ul li {
+    background-color: #232323;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    color: #f0f0f0;
+    border-left: 4px solid #00d8ff; /* Blue for repositories */
+    transition: background-color 0.3s ease;
+}
+
+.manage-repositories-container ul li:hover {
+    background-color: #2b2b2b;
+}
+
+.manage-repositories-container a {
+    color: #00d8ff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.manage-repositories-container a:hover {
+    text-decoration: underline;
+}
+
+.manage-repositories-container .repo-info {
+    font-size: 16px;
+}
+
+.manage-repositories-container .repo-info strong {
+    font-size: 18px;
+    color: #00d8ff; /* Blue for the repository name */
+}
+
+/* Create Repository Page */
+.create-repository-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #1e1e1e;
+    color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.create-repository-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #00d8ff;
+}
+
+.create-repository-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.create-repository-container form input,
+.create-repository-container form select,
+.create-repository-container form button {
+    margin: 15px 0;
+    padding: 12px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.create-repository-container form button {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.create-repository-container form button:hover {
+    background-color: #45a049;
+}
+
+.create-repository-container .form-field label {
+    color: #bbb;
+    margin-bottom: 5px;
+}
+
+.create-repository-container .form-field input {
+    background-color: #121212;
+    color: #eee;
+}
+
+.create-repository-container .form-field select {
+    background-color: #121212;
+    color: #eee;
+    border: 1px solid #444;
+}
+
+.create-repository-container .form-field {
+    margin-bottom: 20px;
+}
+
+.create-repository-container p {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #ccc;
+}
+
+.create-repository-container a {
+    color: #00d8ff;
+    text-decoration: none;
+}
+
+.create-repository-container a:hover {
+    text-decoration: underline;
+}
