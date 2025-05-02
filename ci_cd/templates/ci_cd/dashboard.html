@@ -1,8 +1,7 @@
 {% extends "ci_cd/base.html" %}
+
 {% block content %}
-
 <div class="dashboard-container">
-
     <h2 class="greeting">👋 Welcome, {{ user.username }}!</h2>
     <p class="intro">Here's your CI/CD learning dashboard.</p>
 
@@ -17,21 +16,39 @@
     <!-- 📚 Enrolled Modules -->
     <div class="section card">
         <h3>📚 Enrolled Modules</h3>
-        {% if modules %}
+        {% if enrolled_modules %}
         <ul class="styled-list">
-            {% for module in modules %}
+            {% for module in enrolled_modules %}
             <a href="{% url 'module_detail' module.id %}" class="module-card">
-
                 <div class="module-info">
                     <h4>{{ module.title }}</h4>
                     <p>{{ module.description }}</p>
                 </div>
             </a>
-
             {% endfor %}
         </ul>
         {% else %}
         <p>You are not enrolled in any modules yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- 📚 Available Modules -->
+    <div class="section card">
+        <h3>📚 Available Modules</h3>
+        {% if available_modules %}
+        <ul class="styled-list">
+            {% for module in available_modules %}
+            <a href="{% url 'enroll_in_module' module.id %}" class="module-card">
+                <div class="module-info">
+                    <h4>{{ module.title }}</h4>
+                    <p>{{ module.description }}</p>
+                </div>
+                <p>Click to Enroll</p>
+            </a>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No modules available for enrollment.</p>
         {% endif %}
     </div>
 
@@ -41,7 +58,6 @@
             🔧 Learn How to Create a Git Repository
         </a>
     </div>
-
 
     <!-- 🗂️ Repositories -->
     <div class="section card">
@@ -60,9 +76,9 @@
         {% else %}
         <p>You haven’t created any repositories yet.</p>
         {% endif %}
-        <a href="{% url 'create_repo' %}" class="btn-create">➕ Create New Repository</a>
-    </div>
+        <a href="{% url 'create_repository' %}" class="btn-create">➕ Create New Repository</a>
 
+    </div>
 
     <!-- 📈 Progress -->
     <div class="section progress-section">
@@ -78,11 +94,5 @@
         <p>No exercises yet.</p>
         {% endif %}
     </div>
-
-    <a href="{% url 'cicd_logs' %}" class="btn-learn">🐞 View CI/CD Logs & Debugging</a>
-
-
-
 </div>
-
 {% endblock %}
