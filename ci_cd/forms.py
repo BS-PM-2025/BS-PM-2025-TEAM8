@@ -20,3 +20,13 @@ class RepositoryForm(forms.ModelForm):
     class Meta:
         model = Repository
         fields = ['name', 'url']
+
+class ModuleForm(forms.ModelForm):
+    class Meta:
+        model = Module
+        fields = ['title', 'description']
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['is_instructor']
