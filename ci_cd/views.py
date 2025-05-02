@@ -245,5 +245,18 @@ def test_message(request):
     messages.error(request, "❌ This is a test error!")
     return redirect("dashboard")
 
+@login_required
+def create_module(request):
+    if request.user.is_instructor:  # Check if the user is an instructor
+        if request.method == "POST":
+            form = ModuleForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('dashboard')  # Redirect after creating the module
+        else:
+            form = ModuleForm()
 
+        return render(request, "ci_cd/create_module.html", {'form': form})
+
+    return redirect("dashboard")  # Redirect if the user is not an instructor
 
