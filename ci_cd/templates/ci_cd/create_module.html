@@ -1,0 +1,93 @@
+{% extends "ci_cd/base.html" %}
+
+{% block content %}
+
+<head>
+    <style>
+        /* Specific styles for the create module page */
+        .create-module-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #1f1f1f;
+            /* Dark background to match the general theme */
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .create-module-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            color: #4CAF50;
+            /* Use a green color for headings */
+        }
+
+        .create-module-container form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .create-module-container form input,
+        .create-module-container form textarea,
+        .create-module-container form button {
+            margin: 12px 0;
+            padding: 14px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #333;
+            /* Dark input backgrounds */
+            color: white;
+        }
+
+        .create-module-container form button {
+            background-color: #4CAF50;
+            /* Green button */
+            color: white;
+            cursor: pointer;
+        }
+
+        .create-module-container form button:hover {
+            background-color: #45a049;
+        }
+
+        .create-module-container .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .create-module-container .checkbox-container input {
+            margin-right: 10px;
+        }
+
+        /* Additional styling for smaller screens */
+        @media (max-width: 768px) {
+            .create-module-container {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .create-module-container h2 {
+                font-size: 1.5rem;
+            }
+
+            .create-module-container form input,
+            .create-module-container form button {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<div class="create-module-container">
+    <h2>Create a New Course/Module</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create Module</button>
+    </form>
+</div>
+{% endblock %}
