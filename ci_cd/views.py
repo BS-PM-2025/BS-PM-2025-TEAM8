@@ -17,9 +17,13 @@ def signup_view(request):
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            print(f"✅ User {user.username} registered successfully!")  # Debugging
-            login(request, user)
+            user = form.save()  # Save the user
+
+            # Set the is_instructor field for the user
+            user.is_instructor = form.cleaned_data['is_instructor']
+            user.save()
+
+            login(request, user)  # Log the user in after registration
             return redirect("dashboard")
         else:
             messages.error(request, "There was an error with your submission.")
@@ -81,21 +85,46 @@ def enroll_in_module(request, module_id):
 # Dashboard Page
 @login_required
 def dashboard_view(request):
-    modules = Module.objects.filter(enrollment__user=request.user)
-    repos = Repository.objects.filter(user=request.user)
+    repositories = Repository.objects.filter(user=request.user)
+    if request.user.is_instructor:
+        # Instructor Dashboard
+        students = User.objects.filter(is_instructor=False)  # Get all students
+        progress_data = {}
 
-    total_exercises = Exercise.objects.filter(module__in=modules).count()
-    completed = Progress.objects.filter(user=request.user, completed=True, exercise__module__in=modules).count()
+        for student in students:
+            progress = Progress.objects.filter(user=student)
+            completed = progress.filter(completed=True).count()
+            total_exercises = progress.count()
+            progress_percent = int((completed / total_exercises) * 100) if total_exercises else 0
+            progress_data[student] = {
+                "completed": completed,
+                "total_exercises": total_exercises,
+                "progress_percent": progress_percent
+            }
 
-    progress_percent = int((completed / total_exercises) * 100) if total_exercises else 0
+        return render(request, "ci_cd/instructor_dashboard.html", {
+            "students": progress_data
+        })
+    else:
+        # Student Dashboard
+        enrolled_modules = Module.objects.filter(enrollment__user=request.user)
+        available_modules = Module.objects.exclude(id__in=[module.id for module in enrolled_modules])
 
-    return render(request, "ci_cd/dashboard.html", {
-        "modules": modules,
-        "repos": repos,
-        "completed": completed,
-        "total_exercises": total_exercises,
-        "progress_percent": progress_percent,  
-    })
+        # Get the progress details for the enrolled modules
+        total_exercises = Exercise.objects.filter(module__in=enrolled_modules).count()
+        completed = Progress.objects.filter(user=request.user, completed=True, exercise__module__in=enrolled_modules).count()
+
+        progress_percent = int((completed / total_exercises) * 100) if total_exercises else 0
+
+        return render(request, "ci_cd/dashboard.html", {
+            "repositories": repositories,
+            "enrolled_modules": enrolled_modules,
+            "available_modules": available_modules,
+            "completed": completed,
+            "total_exercises": total_exercises,
+            "progress_percent": progress_percent,
+            "message": "Welcome, Student!"
+        })
 
 
 
