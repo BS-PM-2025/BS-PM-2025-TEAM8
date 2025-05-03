@@ -86,9 +86,10 @@ def enroll_in_module(request, module_id):
 @login_required
 def dashboard_view(request):
     repositories = Repository.objects.filter(user=request.user)
+    
     if request.user.is_instructor:
-        # Instructor Dashboard
-        students = User.objects.filter(is_instructor=False)  # Get all students
+        # Instructor Dashboard: Show repositories for the instructor
+        students = User.objects.filter(is_instructor=False)
         progress_data = {}
 
         for student in students:
@@ -103,21 +104,21 @@ def dashboard_view(request):
             }
 
         return render(request, "ci_cd/instructor_dashboard.html", {
-            "students": progress_data
+            "students": progress_data,
+            "repositories": repositories  # Make sure to pass repositories here
         })
     else:
         # Student Dashboard
         enrolled_modules = Module.objects.filter(enrollment__user=request.user)
         available_modules = Module.objects.exclude(id__in=[module.id for module in enrolled_modules])
 
-        # Get the progress details for the enrolled modules
         total_exercises = Exercise.objects.filter(module__in=enrolled_modules).count()
         completed = Progress.objects.filter(user=request.user, completed=True, exercise__module__in=enrolled_modules).count()
 
         progress_percent = int((completed / total_exercises) * 100) if total_exercises else 0
 
         return render(request, "ci_cd/dashboard.html", {
-            "repositories": repositories,
+            "repositories": repositories,  # Ensure repositories are passed for the student too
             "enrolled_modules": enrolled_modules,
             "available_modules": available_modules,
             "completed": completed,
