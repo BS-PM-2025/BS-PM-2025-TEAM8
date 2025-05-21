@@ -281,4 +281,97 @@ def create_exercise(request, module_id):
     else:
         form = ExerciseForm()
 
-    return render(request, "ci_cd/create_exercise.html", {"form": form, "module": module})
+    return render(request, "ci_cd/create_exercise.html", {"form": form, "module": module})                                           
+
+
+@login_required
+def add_test_file(request, repo_id):
+    try:
+        repo = Repository.objects.get(id=repo_id, user=request.user)
+
+        if request.method == "POST":
+            form = TestFileForm(request.POST)
+            if form.is_valid():
+                filename = form.cleaned_data["filename"]
+                content = form.cleaned_data["content"]
+
+                # File path inside the repo
+                file_path = f"tests/{filename}.py"
+
+                # GitHub repo info
+                url_parts = repo.url.replace("https://github.com/", "").split("/")
+                owner = url_parts[0]
+                repo_name = url_parts[1].replace(".git", "")
+
+                # Upload via GitHub API
+                url = f"https://api.github.com/repos/{owner}/{repo_name}/contents/{file_path}"
+                headers = {
+                    "Authorization": f"Bearer {GITHUB_TOKEN}",
+                    "Accept": "application/vnd.github.v3+json"
+                }
+                data = {
+                    "message": f"Add test file {filename}.py",
+                    "content": base64.b64encode(content.encode("utf-8")).decode("utf-8"),
+                    "branch": "main"
+                }
+
+                response = requests.put(url, json=data, headers=headers)
+
+                if response.status_code in [200, 201]:
+                    messages.success(request, f"✅ Test file '{filename}.py' added to GitHub.")
+
+                    # 🔄 Pull the update into the local clone
+                    repo_path = os.path.join(settings.BASE_DIR, 'repos', str(repo.id))
+                    try:
+                        local_repo = Repo(repo_path)
+                        local_repo.remotes.origin.pull()
+                        messages.success(request, f"🔄 Local repository updated successfully.")
+                    except Exception as e:
+                        messages.warning(request, f"⚠️ Test uploaded, but failed to pull locally: {e}")
+                else:
+                    error_message = response.json().get("message", "Unknown error")
+                    messages.error(request, f"❌ Error while adding test file: {error_message}")
+
+                return redirect("dashboard")
+        else:
+            form = TestFileForm()
+
+        return render(request, "ci_cd/add_test_file.html", {"form": form, "repo": repo})
+
+    except Repository.DoesNotExist:
+        messages.error(request, "❌ Repository not found or you don't have access.")
+        return redirect("dashboard")
+
+
+
+
+
+@login_required
+def run_tests(request, repo_id):
+    try:
+        # Get the repository
+        repo = Repository.objects.get(id=repo_id, user=request.user)
+
+        # Define the local path to the tests directory
+        repo_path = os.path.join(settings.BASE_DIR, 'repos', str(repo.id), 'tests')
+
+        # Run the tests (force discovery)
+        result = subprocess.run(
+            [os.path.join(settings.BASE_DIR, 'venv', 'Scripts', 'python.exe'), "-m", "pytest", repo_path, "--verbose", "--doctest-modules", "--maxfail=3"],
+            capture_output=True,
+            text=True
+        )
+
+        # Capture the test output
+        output = result.stdout if result.stdout else result.stderr
+
+        # Show the test results as a message
+        messages.info(request, output, extra_tags="test-result")
+        return redirect("dashboard")
+
+    except Repository.DoesNotExist:
+        messages.error(request, "Repository not found or you don't have access to it.")
+        return redirect("dashboard")
+    except Exception as e:
+        messages.error(request, f"Error while running tests: {e}")
+        return redirect("dashboard")
