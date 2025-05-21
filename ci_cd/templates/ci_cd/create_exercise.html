@@ -1,0 +1,146 @@
+{% extends "ci_cd/base.html" %}
+
+{% block content %}
+<div class="create-exercise-container">
+    <h2>Create Exercise for Module: {{ module.title }}</h2>
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Exercise Details Section -->
+        <div class="form-section">
+            <h3>Exercise Details</h3>
+            <div class="form-field">
+                <label for="title">Exercise Title</label>
+                {{ form.title }}
+            </div>
+
+            <div class="form-field">
+                <label for="description">Exercise Description</label>
+                {{ form.description }}
+            </div>
+
+            <div class="form-field">
+                <label for="steps">Steps</label>
+                {{ form.steps }}
+            </div>
+        </div>
+
+        <!-- Resources Section -->
+        <div class="form-section">
+            <h3>Resources</h3>
+            <div class="form-field">
+                <label for="resources">Provide Resources</label>
+                {{ form.resources }}
+            </div>
+        </div>
+
+        <!-- Solution Section (Instructor only) -->
+        <div class="form-section">
+            <h3>Solution (Instructors only)</h3>
+            <div class="form-field">
+                <label for="solution">Exercise Solution</label>
+                {{ form.solution }}
+            </div>
+        </div>
+
+        <!-- Difficulty Section -->
+        <div class="form-section">
+            <h3>Difficulty Level</h3>
+            <div class="form-field">
+                <label for="difficulty">Difficulty</label>
+                {{ form.difficulty }}
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit">Create Exercise</button>
+    </form>
+</div>
+
+<style>
+    /* Container and Layout */
+    .create-exercise-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #1e1e1e;
+        color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Header Style */
+    .create-exercise-container h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #00d8ff;
+    }
+
+    /* Section Header Style */
+    .form-section h3 {
+        font-size: 20px;
+        margin-bottom: 15px;
+        color: #00d8ff;
+        border-bottom: 2px solid #3c9aab;
+        padding-bottom: 5px;
+    }
+
+    /* Form Fields */
+    .create-exercise-container .form-field {
+        margin-bottom: 20px;
+    }
+
+    .create-exercise-container .form-field label {
+        color: #bbb;
+        margin-bottom: 5px;
+    }
+
+    .create-exercise-container .form-field input,
+    .create-exercise-container .form-field select,
+    .create-exercise-container .form-field textarea {
+        background-color: #121212;
+        color: #eee;
+        padding: 14px;
+        border-radius: 8px;
+        border: 1px solid #444;
+        font-size: 16px;
+        width: 100%;
+    }
+
+    /* Submit Button */
+    .create-exercise-container button {
+        background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+        padding: 14px;
+        border-radius: 8px;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .create-exercise-container button:hover {
+        background-color: #45a049;
+    }
+
+    /* Style for Links */
+    .create-exercise-container a {
+        color: #00d8ff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .create-exercise-container a:hover {
+        text-decoration: underline;
+    }
+
+    /* Form Sections with Background Color */
+    .form-section {
+        background-color: #232323;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    }
+</style>
+{% endblock %}
