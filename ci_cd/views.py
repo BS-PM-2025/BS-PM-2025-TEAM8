@@ -402,7 +402,8 @@ def run_tests(request, repo_id):
 @login_required
 def docker_basics_view(request):
     return render(request, "ci_cd/docker_basics.html")
-    form = ExerciseForm()
+
+
 
 def create_tests_directory(owner, repo_name, headers):
     """Create a tests/ directory in the new repository"""
