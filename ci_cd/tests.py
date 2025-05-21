@@ -75,3 +75,16 @@ class ProgressBarTests(TestCase):
         response = self.client.get(reverse('dashboard'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Your Progress')  # טקסט שמייצג את אזור ההתקדמות
+
+
+# User Stories 6 & 7: Run automated tests and trigger CI/CD
+class RunTestsCI(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='student3', password='pass')
+        self.repo = Repository.objects.create(name="TestRepo", user=self.user)
+        self.client.login(username='student3', password='pass')
+
+    def test_run_tests(self):
+        response = self.client.get(reverse('run_tests', args=[self.repo.id]))
+        self.assertEqual(response.status_code, 302)
