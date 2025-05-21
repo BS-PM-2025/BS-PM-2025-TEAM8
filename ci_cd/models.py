@@ -30,6 +30,9 @@ class Exercise(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     difficulty = models.IntegerField(choices=DIFFICULTY_LEVELS, default=1)
+    steps = models.TextField(help_text="Detailed steps to complete this task")
+    resources = models.TextField(help_text="External resources (URLs) for reference", blank=True, null=True)
+    solution = models.TextField(help_text="Detailed solution for instructors (optional)")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
