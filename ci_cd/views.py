@@ -379,3 +379,7 @@ def run_tests(request, repo_id):
     except Exception as e:
         messages.error(request, f"Error while running tests: {e}")
         return redirect("dashboard")
+
+@login_required
+def docker_basics_view(request):
+    return render(request, "ci_cd/docker_basics.html")
