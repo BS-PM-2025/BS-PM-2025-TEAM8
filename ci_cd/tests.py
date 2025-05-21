@@ -88,3 +88,15 @@ class RunTestsCI(TestCase):
     def test_run_tests(self):
         response = self.client.get(reverse('run_tests', args=[self.repo.id]))
         self.assertEqual(response.status_code, 302)
+
+# User Story 8: Docker basics learning page
+class DockerBasicsViewTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='student4', password='pass')
+        self.client.login(username='student4', password='pass')
+
+    def test_docker_basics_page(self):
+        response = self.client.get(reverse('docker_basics'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Docker")
