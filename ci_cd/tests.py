@@ -164,3 +164,22 @@ class GitPushTests(TestCase):
             'commit_message': 'Initial commit'
         })
         self.assertIn(response.status_code, [200, 302])
+        # User Story 10: Monitor student performance
+class InstructorPerformanceTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.instructor = User.objects.create_user(username='instructor1', password='pass', is_instructor=True)
+        self.student = User.objects.create_user(username='student5', password='pass')
+        self.module = Module.objects.create(title='Test Mod', description='desc')
+        self.exercise = Exercise.objects.create(title='Ex1', description='test', module=self.module)
+        self.client.login(username='instructor1', password='pass')
+
+    def test_dashboard_includes_student_progress(self):
+        Enrollment.objects.create(user=self.student, module=self.module)
+        Progress.objects.create(user=self.student, exercise=self.exercise, completed=False)
+        response = self.client.get(reverse('dashboard'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.student.username)
+
+
+
