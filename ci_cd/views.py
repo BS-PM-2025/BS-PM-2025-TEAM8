@@ -140,18 +140,79 @@ def dashboard_view(request):
 def ci_cd_intro(request):
     return render(request, "ci_cd/ci_cd_intro.html")
 
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "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")
+
+
+@login_required
 def create_repository(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = RepositoryForm(request.POST)
         if form.is_valid():
             repo = form.save(commit=False)
             repo.user = request.user
-            repo.save()
-            return redirect('dashboard')  # or a separate page like 'my_repos'
+
+            repo_name = repo.name
+            owner = "YazanW1"  # Your GitHub username
+
+            # GitHub API request to create the repo
+            api_url = "https://api.github.com/user/repos"
+            headers = {
+                "Authorization": f"Bearer {GITHUB_TOKEN}",
+                "Accept": "application/vnd.github.v3+json"
+            }
+            data = {
+                "name": repo_name,
+                "description": f"Repository for {repo_name}",
+                "private": False
+            }
+
+            response = requests.post(api_url, json=data, headers=headers)
+
+            if response.status_code == 201:
+                # Save repo URL
+                repo.url = f"https://github.com/{owner}/{repo_name}.git"
+                repo.save()
+
+                # Clone locally
+                repo_path = os.path.join(settings.BASE_DIR, "repos", str(repo.id))
+                os.makedirs(repo_path, exist_ok=True)
+                Repo.clone_from(repo.url, repo_path)
+
+                # Inject token for push access
+                repo_git = Repo(repo_path)
+                remote_with_token = f"https://{GITHUB_TOKEN}:x-oauth-basic@github.com/{owner}/{repo_name}.git"
+                repo_git.remotes.origin.set_url(remote_with_token)
+
+                # Create tests/ directory
+                tests_dir = os.path.join(repo_path, "tests")
+                os.makedirs(tests_dir, exist_ok=True)
+                with open(os.path.join(tests_dir, ".gitkeep"), "w") as f:
+                    f.write("")
+
+                # Create Dockerfile
+                dockerfile_content = """
+FROM python:3.10
+WORKDIR /app
+COPY . .
+RUN pip install pytest
+CMD ["pytest", "tests"]
+""".strip()
+
+                with open(os.path.join(repo_path, "Dockerfile"), "w") as dockerfile:
+                    dockerfile.write(dockerfile_content)
+
+                # Commit and push everything
+                repo_git.git.add(all=True)
+                repo_git.index.commit("Initialize with tests/ directory and Dockerfile")
+                repo_git.remotes.origin.push()
+
+                messages.success(request, f"🚀 Repository created and pushed at {repo.url}")
+                return redirect("dashboard")
+            else:
+                error_message = response.json().get("message", "Unknown error")
+                messages.error(request, f"❌ Error creating repo: {error_message}")
     else:
         form = RepositoryForm()
-
-    return render(request, 'ci_cd/create_repository.html', {'form': form})
 
 
 @login_required
@@ -200,48 +261,6 @@ def git_basics_view(request):
 
 
 
-@login_required
-def create_repository_view(request):
-    if request.method == "POST":
-        form = RepositoryForm(request.POST)
-        if form.is_valid():
-            repo = form.save(commit=False)
-            repo.user = request.user
-            repo.save()
-
-            # ✅ Print GitHub repo debug info
-            print(f"🚀 New repository created: {repo.name} | {repo.url}")
-
-            github_url = repo.url
-            api_url = github_url.replace("https://github.com/", "https://api.github.com/repos/")
-            print(f"🔗 Checking GitHub API: {api_url}")
-
-            try:
-                response = requests.get(api_url)
-                print(f"📡 GitHub response status: {response.status_code}")
-
-                if response.status_code == 200:
-                    repo_info = response.json()
-                    is_private = repo_info.get("private", False)
-                    has_files = repo_info.get("size", 0) > 0
-
-                    print("✅ Repo exists on GitHub!")
-                    print(f"🔒 Private: {is_private}")
-                    print(f"📁 Has files: {has_files}")
-
-                    messages.success(request, "✅ Repository found and verified on GitHub!")
-                else:
-                    print("❌ GitHub repo not found or not accessible.")
-                    messages.warning(request, "⚠️ GitHub repo not found or is private.")
-            except Exception as e:
-                print("🔥 Error checking GitHub repo:", e)
-                messages.error(request, "An error occurred while validating the GitHub repo.")
-
-            return redirect("dashboard")
-    else:
-        form = RepositoryForm()
-    
-    return render(request, "ci_cd/create_repository.html", {"form": form})
 
 @login_required
 def cicd_logs_view(request):
@@ -383,3 +402,123 @@ def run_tests(request, repo_id):
 @login_required
 def docker_basics_view(request):
     return render(request, "ci_cd/docker_basics.html")
+     form = ExerciseForm()
+
+    return render(request, "ci_cd/create_exercise.html", {"form": form, "module": module})
+
+ef create_tests_directory(owner, repo_name, headers):
+    """Create a tests/ directory in the new repository"""
+    url = f"https://api.github.com/repos/{owner}/{repo_name}/contents/tests/.gitkeep"
+    data = {
+        "message": "Create tests directory",
+        "content": "",
+        "branch": "main"
+    }
+    response = requests.put(url, json=data, headers=headers)
+
+    if response.status_code == 201 or response.status_code == 200:
+        print(f"✅ Created tests/ directory in {repo_name}")
+    else:
+        print(f"❌ Failed to create tests/ directory in {repo_name}: {response.json()}")
+
+
+
+@login_required
+def commit_and_push(request, repo_id):
+    try:
+        repo = Repository.objects.get(id=repo_id, user=request.user)
+
+        if request.method == "POST":
+            form = CodePushForm(request.POST)
+            if form.is_valid():
+                filename = form.cleaned_data["filename"]
+                commit_message = form.cleaned_data["commit_message"]
+                file_content = form.cleaned_data["file_content"]
+
+                # Extract the owner and repository name from the URL
+                url_parts = repo.url.replace("https://github.com/", "").split("/")
+                owner = url_parts[0]
+                repo_name = url_parts[1].replace(".git", "")
+
+                # Encode the file content to Base64
+                encoded_content = base64.b64encode(file_content.encode("utf-8")).decode("utf-8")
+
+                # Check if the file already exists
+                check_url = f"https://api.github.com/repos/{owner}/{repo_name}/contents/{filename}"
+                headers = {
+                    "Authorization": f"Bearer {GITHUB_TOKEN}",
+                    "Accept": "application/vnd.github.v3+json"
+                }
+
+                response = requests.get(check_url, headers=headers)
+
+                # Prepare the data for the push
+                data = {
+                    "message": commit_message,
+                    "content": encoded_content,
+                    "branch": "main"  # Use "master" if that's the default branch
+                }
+
+                # If the file already exists, add the SHA
+                if response.status_code == 200:
+                    file_info = response.json()
+                    data["sha"] = file_info["sha"]
+
+                # Push the file
+                push_response = requests.put(check_url, json=data, headers=headers)
+
+                if push_response.status_code == 201 or push_response.status_code == 200:
+                    messages.success(request, "Code pushed successfully!")
+                else:
+                    error_message = push_response.json().get("message", "Unknown error")
+                    messages.error(request, f"Error while pushing to GitHub: {error_message}")
+
+                return redirect("dashboard")
+        else:
+            form = CodePushForm()
+
+        return render(request, "ci_cd/commit_and_push.html", {"form": form, "repo": repo})
+
+    except Repository.DoesNotExist:
+        messages.error(request, "Repository not found or you don't have access to it.")
+        return redirect("dashboard")
+
+
+
+
+@login_required
+def add_test_file(request, repo_id):
+    try:
+        repo = Repository.objects.get(id=repo_id, user=request.user)
+
+        if request.method == "POST":
+            form = TestFileForm(request.POST)
+            if form.is_valid():
+                filename = form.cleaned_data["filename"]
+                content = form.cleaned_data["content"]
+
+                # File path inside the repo
+                file_path = f"tests/{filename}.py"
+
+                # GitHub repo info
+                url_parts = repo.url.replace("https://github.com/", "").split("/")
+                owner = url_parts[0]
+                repo_name = url_parts[1].replace(".git", "")
+
+                # Upload via GitHub API
+                url = f"https://api.github.com/repos/{owner}/{repo_name}/contents/{file_path}"
+                headers = {
+                    "Authorization": f"Bearer {GITHUB_TOKEN}",
+                    "Accept": "application/vnd.github.v3+json"
+                }
+                data = {
+                    "message": f"Add test file {filename}.py",
+                    "content": base64.b64encode(content.encode("utf-8")).decode("utf-8"),
+                    "branch": "main"
+                }
+
+                response = requests.put(url, json=data, headers=headers)
+
+                if response.status_code in [200, 201]:
+                    messages.success(request, f"✅ Test file '{filename}.py' added to GitHub.")
+
