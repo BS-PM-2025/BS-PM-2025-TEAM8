@@ -37,3 +37,6 @@ class ExerciseForm(forms.ModelForm):
         model = Exercise
         fields = ['title', 'description', 'difficulty', 'steps', 'resources', 'solution']        
         
+class TestFileForm(forms.Form):
+    filename = forms.CharField(max_length=255, label="Filename")
+    content = forms.CharField(widget=forms.Textarea, label="File Content")
