@@ -100,3 +100,67 @@ class DockerBasicsViewTests(TestCase):
         response = self.client.get(reverse('docker_basics'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Docker")
+        # === Sprint 2 User Story Tests ===
+
+
+# User Story 2: Start guided CI/CD exercise
+class GuidedExerciseTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='student1', password='pass')
+        self.client.login(username='student1', password='pass')
+
+    def test_ci_cd_intro_view(self):
+        response = self.client.get(reverse('ci_cd_intro'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Introduction to CI/CD")
+
+
+# User Story 3: Create and manage courses
+class ModuleTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='inst1', password='pass', is_instructor=True)
+        self.client.login(username='inst1', password='pass')
+
+    def test_create_module(self):
+        response = self.client.post(reverse('create_module'), {
+            'title': 'Test Module',
+            'description': 'Test description'
+        })
+        self.assertEqual(response.status_code, 302)
+
+# User Story 4: Assign exercises
+class ExerciseTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='inst2', password='pass', is_instructor=True)
+        self.module = Module.objects.create(title='Test Mod', description='desc')
+        self.client.login(username='inst2', password='pass')
+
+    def test_create_exercise(self):
+        response = self.client.post(reverse('create_exercise', args=[self.module.id]), {
+            'title': 'Exercise A',
+            'description': 'Do it',
+            'difficulty': 3,  # or whatever choices you use
+            'steps': '1. Clone the repo\n2. Run tests\n3. Deploy',
+            'solution': 'print("solution")'
+        })
+        self.assertEqual(response.status_code, 302)
+
+# User Story 5: Push code to GitHub
+class GitPushTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='student2', password='pass')
+        self.repo = Repository.objects.create(name="RepoPush", user=self.user)
+        self.client.login(username='student2', password='pass')
+
+    def test_commit_and_push(self):
+        # Adjusted to prevent view fallback
+        response = self.client.post(reverse('commit_and_push', args=[self.repo.id]), {
+            'file_path': 'test.py',
+            'content': 'print("Hello World")',
+            'commit_message': 'Initial commit'
+        })
+        self.assertIn(response.status_code, [200, 302])
