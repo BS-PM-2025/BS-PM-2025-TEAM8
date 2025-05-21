@@ -8,6 +8,8 @@ from .models import Module, Enrollment , Repository ,Progress , Exercise
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 import requests
+import os
+
 
 # Get the User model
 User = get_user_model()
