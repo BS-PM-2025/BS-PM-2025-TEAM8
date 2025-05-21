@@ -404,9 +404,7 @@ def docker_basics_view(request):
     return render(request, "ci_cd/docker_basics.html")
     form = ExerciseForm()
 
-    return render(request, "ci_cd/create_exercise.html", {"form": form, "module": module})
-
-ef create_tests_directory(owner, repo_name, headers):
+def create_tests_directory(owner, repo_name, headers):
     """Create a tests/ directory in the new repository"""
     url = f"https://api.github.com/repos/{owner}/{repo_name}/contents/tests/.gitkeep"
     data = {
