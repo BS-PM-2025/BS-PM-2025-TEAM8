@@ -1,0 +1,98 @@
+{% extends 'ci_cd/base.html' %}
+{% block content %}
+<div class="commit-push-container">
+    <h2 class="commit-push-heading">Commit and Push to Repository</h2>
+    <form method="POST" class="commit-push-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Push Code</button>
+    </form>
+</div>
+
+<style>
+    /* Commit and Push Page Styles */
+    .commit-push-container {
+        width: 90%;
+        max-width: 800px;
+        margin: 50px auto;
+        background-color: #1e1e1e;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Form Styles */
+    .commit-push-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .commit-push-form input[type="text"],
+    .commit-push-form textarea {
+        background-color: #2a2a2a;
+        color: #ffffff;
+        padding: 15px;
+        border: 1px solid #444444;
+        border-radius: 5px;
+        font-size: 14px;
+        resize: vertical;
+    }
+
+    .commit-push-form button[type="submit"] {
+        background-color: #4caf50;
+        color: #ffffff;
+        border: none;
+        padding: 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-weight: bold;
+    }
+
+    .commit-push-form button[type="submit"]:hover {
+        background-color: #388e3c;
+    }
+
+    /* Headings */
+    .commit-push-heading {
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+
+    /* Messages */
+    .commit-push-message-success {
+        background-color: #388e3c;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .commit-push-message-error {
+        background-color: #d32f2f;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    /* Links */
+    .commit-push-link {
+        color: #4caf50;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .commit-push-link:hover {
+        color: #388e3c;
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
