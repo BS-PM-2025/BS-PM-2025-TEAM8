@@ -31,3 +31,9 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['is_instructor']
+
+class ExerciseForm(forms.ModelForm):
+    class Meta:
+        model = Exercise
+        fields = ['title', 'description', 'difficulty', 'steps', 'resources', 'solution']        
+        
