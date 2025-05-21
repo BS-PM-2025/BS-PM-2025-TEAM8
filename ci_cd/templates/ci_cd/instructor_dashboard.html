@@ -26,6 +26,45 @@
     </div>
 
     <!-- Student Progress Section -->
-       
+        <!-- Student Progress Section -->
+    <div class="dashboard-section card">
+        <h3>📈 Student Progress</h3>
+        <p>Track the progress of your enrolled students in each course.</p>
+
+        <!-- Student Progress Table -->
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Completed Exercises</th>
+                    <th>Total Exercises</th>
+                    <th>Progress</th>
+                    <th>Needs Help?</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student, data in students.items %}
+                <tr>
+                    <td>{{ student.username }}</td>
+                    <td>{{ data.completed }}</td>
+                    <td>{{ data.total_exercises }}</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ data.progress_percent }}%;"></div>
+                        </div>
+                        {{ data.progress_percent }}%
+                    </td>
+                    <td>
+                        {% if data.needs_help %}
+                        <span style="color: red; font-weight: bold;">⚠️ Yes</span>
+                        {% else %}
+                        <span style="color: green;">✔️ No</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
