@@ -521,3 +521,25 @@ def add_test_file(request, repo_id):
                 if response.status_code in [200, 201]:
                     messages.success(request, f"✅ Test file '{filename}.py' added to GitHub.")
 
+                    # 🔄 Pull the update into the local clone
+                    repo_path = os.path.join(settings.BASE_DIR, 'repos', str(repo.id))
+                    try:
+                        local_repo = Repo(repo_path)
+                        local_repo.remotes.origin.pull()
+                        messages.success(request, f"🔄 Local repository updated successfully.")
+                    except Exception as e:
+                        messages.warning(request, f"⚠️ Test uploaded, but failed to pull locally: {e}")
+                else:
+                    error_message = response.json().get("message", "Unknown error")
+                    messages.error(request, f"❌ Error while adding test file: {error_message}")
+
+                return redirect("dashboard")
+        else:
+            form = TestFileForm()
+
+        return render(request, "ci_cd/add_test_file.html", {"form": form, "repo": repo})
+
+    except Repository.DoesNotExist:
+        messages.error(request, "❌ Repository not found or you don't have access.")
+        return redirect("dashboard")
+
