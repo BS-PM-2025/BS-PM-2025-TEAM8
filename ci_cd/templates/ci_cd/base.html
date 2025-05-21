@@ -11,14 +11,6 @@
 </head>
 
 <body>
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <div class="alert {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
     <header>
         <nav>
             <div class="nav-left">
@@ -36,11 +28,42 @@
         </nav>
     </header>
 
-
     <div class="content">
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            {% if "test-result" in message.tags %}
+            <div class="test-output-message {{ message.tags }}">
+                <pre>{{ message }}</pre>
+            </div>
+            {% else %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
         {% block content %}
         {% endblock %}
     </div>
 </body>
+
+<style>
+    .test-output-message {
+        background-color: #121212;
+        color: #00ffcc;
+        padding: 20px;
+        font-size: 14px;
+        border: 1px solid #00ffcc;
+        border-radius: 10px;
+        font-family: 'Courier New', monospace;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+        max-width: 100%;
+        margin: 30px auto;
+    }
+</style>
 
 </html>
