@@ -74,6 +74,7 @@ class Repository(models.Model):
     def __str__(self):
         return self.name
 
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_instructor = models.BooleanField(default=False)  # This field will determine if the user is an instructor
