@@ -402,7 +402,7 @@ def run_tests(request, repo_id):
 @login_required
 def docker_basics_view(request):
     return render(request, "ci_cd/docker_basics.html")
-     form = ExerciseForm()
+    form = ExerciseForm()
 
     return render(request, "ci_cd/create_exercise.html", {"form": form, "module": module})
 
