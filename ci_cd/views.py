@@ -88,46 +88,50 @@ def enroll_in_module(request, module_id):
 # Dashboard Page
 @login_required
 def dashboard_view(request):
-    repositories = Repository.objects.filter(user=request.user)
-    
     if request.user.is_instructor:
-        # Instructor Dashboard: Show repositories for the instructor
+        # Instructor Dashboard
+        modules = Module.objects.all()
         students = User.objects.filter(is_instructor=False)
         progress_data = {}
 
         for student in students:
             progress = Progress.objects.filter(user=student)
+            total_exercises = Exercise.objects.filter(module__in=Module.objects.filter(enrollment__user=student)).count()
             completed = progress.filter(completed=True).count()
-            total_exercises = progress.count()
             progress_percent = int((completed / total_exercises) * 100) if total_exercises else 0
+
+            if total_exercises == 0:
+                needs_help = False
+            else:
+                needs_help = progress_percent < 50
+
             progress_data[student] = {
                 "completed": completed,
                 "total_exercises": total_exercises,
-                "progress_percent": progress_percent
+                "progress_percent": progress_percent,
+                "needs_help": needs_help
             }
 
         return render(request, "ci_cd/instructor_dashboard.html", {
-            "students": progress_data,
-            "repositories": repositories  # Make sure to pass repositories here
+            "modules": modules,
+            "students": progress_data
         })
+
     else:
-        # Student Dashboard
+        # Student Dashboard (unchanged)
         enrolled_modules = Module.objects.filter(enrollment__user=request.user)
         available_modules = Module.objects.exclude(id__in=[module.id for module in enrolled_modules])
-
         total_exercises = Exercise.objects.filter(module__in=enrolled_modules).count()
         completed = Progress.objects.filter(user=request.user, completed=True, exercise__module__in=enrolled_modules).count()
-
         progress_percent = int((completed / total_exercises) * 100) if total_exercises else 0
 
         return render(request, "ci_cd/dashboard.html", {
-            "repositories": repositories,  # Ensure repositories are passed for the student too
+            "repositories": Repository.objects.filter(user=request.user),
             "enrolled_modules": enrolled_modules,
             "available_modules": available_modules,
             "completed": completed,
             "total_exercises": total_exercises,
-            "progress_percent": progress_percent,
-            "message": "Welcome, Student!"
+            "progress_percent": progress_percent
         })
 
 
