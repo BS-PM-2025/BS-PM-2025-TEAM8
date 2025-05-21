@@ -74,6 +74,9 @@ def enroll_in_module(request, module_id):
     enrollment, created = Enrollment.objects.get_or_create(user=request.user, module=module)
 
     if created:
+        exercises = Exercise.objects.filter(module=module)  # Fetch real CI/CD exercises
+        for exercise in exercises:
+            Progress.objects.get_or_create(user=request.user, exercise=exercise)
         message = f"✅ Successfully enrolled in {module.title}!"
         print(message)  # Debugging
     else:
@@ -261,3 +264,21 @@ def create_module(request):
 
     return redirect("dashboard")  # Redirect if the user is not an instructor
 
+
+@login_required
+def create_exercise(request, module_id):
+    module = get_object_or_404(Module, id=module_id)
+    if request.method == "POST":
+        form = ExerciseForm(request.POST)
+        if form.is_valid():
+            exercise = form.save(commit=False)
+            exercise.module = module  # Assign the exercise to the specific module
+            exercise.save()
+            print(f"✅ New exercise created for module {module.title}: {exercise.title}")
+            return redirect('module_detail', module_id=module.id)
+        else:
+            print("❌ Form is not valid:", form.errors)
+    else:
+        form = ExerciseForm()
+
+    return render(request, "ci_cd/create_exercise.html", {"form": form, "module": module})
