@@ -535,7 +535,7 @@ def edit_profile(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
 
     if request.method == "POST":
-        form = EditProfileForm(request.POST, request.FILES, instance=profile, user=request.user)
+        form = EditProfileForm(request.POST, request.FILES, instance=request.user.profile, user=request.user)
         if form.is_valid():
             form.save(user=request.user)
             return redirect('dashboard')  # Or any success page
