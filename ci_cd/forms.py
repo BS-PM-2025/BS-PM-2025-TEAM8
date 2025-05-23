@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User , Repository,Profile,Module,Exercise
+from .models import User , Repository,Profile,Module,Exercise,Notification
 from django.contrib.auth import get_user_model
 import re
 from django.forms import ModelForm
@@ -71,7 +71,7 @@ class EditProfileForm(ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['notifications_enabled']
+        fields = ['profile_picture','notifications_enabled']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
@@ -94,3 +94,16 @@ class EditProfileForm(ModelForm):
         return profile
     
 
+class NotificationForm(forms.ModelForm):
+    receiver = forms.ModelChoiceField(
+        queryset=User.objects.filter(is_instructor=False),
+        label="Send to Student"
+    )
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 4}),
+        label="Message"
+    )
+
+    class Meta:
+        model = Notification
+        fields = ['receiver', 'message']

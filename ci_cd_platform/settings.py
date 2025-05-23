@@ -146,10 +146,13 @@ from django.contrib.messages import constants as messages
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 
+
+#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "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")
 
-import os
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
-#GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "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")

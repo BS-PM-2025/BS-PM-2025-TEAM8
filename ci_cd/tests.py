@@ -2,7 +2,15 @@ from django.test import TestCase,Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from ci_cd.models import Module, Exercise, Repository, Enrollment, Progress
+from ci_cd.models import Module, Exercise, Repository, Enrollment, Progress,Notification,Profile
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test.utils import override_settings
+from django.test.utils import override_settings
+import tempfile
+import shutil
+
+MEDIA_ROOT = tempfile.mkdtemp()
+
 
 User = get_user_model()
 
@@ -186,3 +194,81 @@ class InstructorPerformanceTests(TestCase):
         response = self.client.get(reverse('dashboard'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.student.username)
+
+
+# === Hackathon Feature Tests ===
+
+@override_settings(MEDIA_ROOT=MEDIA_ROOT)
+class ProfileFeatureTests(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='pass1234', email='old@mail.com')
+        self.client.login(username='testuser', password='pass1234')
+
+    def test_edit_profile_info(self):
+        response = self.client.post(reverse('edit_profile'), {
+            'email': 'new@mail.com',
+            'first_name': 'New',
+            'last_name': 'User',
+            'notifications_enabled': True
+        })
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, 'new@mail.com')
+        self.assertRedirects(response, reverse('dashboard'))
+
+
+    def test_toggle_notifications(self):
+        response = self.client.post(reverse('edit_profile'), {
+            'email': 'test@mail.com',
+            'notifications_enabled': False
+        })
+        profile = Profile.objects.get(user=self.user)
+        self.assertFalse(profile.notifications_enabled)
+        self.assertRedirects(response, reverse('dashboard'))
+
+    def test_delete_account(self):
+        response = self.client.post(reverse('delete_account'))
+        self.assertFalse(User.objects.filter(username='testuser').exists())
+        self.assertRedirects(response, reverse('signup'))  
+
+
+class NotificationFeatureTests(TestCase):
+    def setUp(self):
+        self.instructor = User.objects.create_user(username='inst', password='pass', is_instructor=True)
+        self.student = User.objects.create_user(username='stud', password='pass', is_instructor=False)
+        self.client.login(username='inst', password='pass')
+
+    def test_send_notification(self):
+        response = self.client.post(reverse('send_notification'), {
+            'receiver': self.student.id,
+            'message': 'Test notification'
+        })
+        self.assertEqual(Notification.objects.count(), 1)
+        self.assertRedirects(response, reverse('dashboard'))
+
+    def test_view_notifications(self):
+        Notification.objects.create(sender=self.instructor, receiver=self.student, message='Hello student')
+        self.client.logout()
+        self.client.login(username='stud', password='pass')
+        response = self.client.get(reverse('student_notifications'))
+        self.assertContains(response, 'Hello student')
+
+    def test_unread_notifications_display(self):
+        Notification.objects.create(sender=self.instructor, receiver=self.student, message='Unread msg', read=False)
+        self.client.logout()
+        self.client.login(username='stud', password='pass')
+        response = self.client.get(reverse('student_notifications'))
+        self.assertContains(response, 'Unread msg')
+
+    def test_mark_all_as_read(self):
+        Notification.objects.create(sender=self.instructor, receiver=self.student, message='Unread 1', read=False)
+        Notification.objects.create(sender=self.instructor, receiver=self.student, message='Unread 2', read=False)
+        self.client.logout()
+        self.client.login(username='stud', password='pass')
+        Notification.objects.filter(receiver=self.student, read=False).update(read=True)
+        unread_count = Notification.objects.filter(receiver=self.student, read=False).count()
+        self.assertEqual(unread_count, 0)

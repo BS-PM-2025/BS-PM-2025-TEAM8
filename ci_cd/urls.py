@@ -38,6 +38,8 @@ urlpatterns = [
     path("modules/browse/", views.browse_modules, name="browse_modules"),
     path("edit_profile/", views.edit_profile, name="edit_profile"),
     path("profile/", views.view_profile, name="view_profile"),
-
+    path("delete_account/", views.delete_account, name="delete_account"),
+    path('send_notification/', views.send_notification, name='send_notification'),
+    path("notifications/", views.student_notifications, name="student_notifications"),
 
 ]

@@ -83,8 +83,19 @@ class Repository(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_instructor = models.BooleanField(default=False)
-    #profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     notifications_enabled = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.user.username} Profile"
+
+
+class Notification(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_notifications')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_notifications')
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"To {self.receiver.username}: {self.message[:30]}"
