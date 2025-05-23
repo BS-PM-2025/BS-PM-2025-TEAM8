@@ -146,5 +146,10 @@ from django.contrib.messages import constants as messages
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 
+import os
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+import os
+
+#GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "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")

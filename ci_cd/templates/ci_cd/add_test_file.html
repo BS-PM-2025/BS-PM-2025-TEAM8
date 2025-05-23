@@ -1,38 +1,39 @@
-{% extends "ci_cd/base.html" %}
+{% extends 'ci_cd/base.html' %}
 
 {% block content %}
-<div class="create-repository-container">
-    <h2>📁 Create a New Repository</h2>
+<div class="form-container">
+    <h2>🧪 Add Test File</h2>
+
     <form method="POST">
         {% csrf_token %}
-
         <div class="form-field">
-            <label for="id_name">Repository Name</label>
-            {{ form.name }}
+            <label for="id_filename">Test Name</label>
+            {{ form.filename }}
         </div>
 
-        <button type="submit">➕ Create Repository</button>
+        <div class="form-field">
+            <label for="id_content">Test File Content</label>
+            {{ form.content }}
+        </div>
+
+        <button type="submit">➕ Add Test File</button>
     </form>
-    <p style="text-align:center; margin-top: 20px;">
-        <a href="{% url 'dashboard' %}" class="back-link">← Back to Dashboard</a>
-    </p>
 </div>
 
 <style>
-    .create-repository-container {
-        max-width: 600px;
-        margin: 60px auto;
+    .form-container {
+        max-width: 800px;
+        margin: 50px auto;
         padding: 40px;
         background-color: #ffffff;
         border: 1.5px solid #007bff;
         border-radius: 16px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
-        font-family: 'Poppins', sans-serif;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
     }
 
-    .create-repository-container h2 {
+    .form-container h2 {
         text-align: center;
-        font-size: 24px;
+        font-size: 26px;
         color: #007bff;
         margin-bottom: 30px;
     }
@@ -48,19 +49,24 @@
         color: #333;
     }
 
-    .form-field input {
+    .form-field input,
+    .form-field textarea {
         width: 100%;
         padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        background-color: #f9f9f9;
         font-size: 15px;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
         color: #333;
+    }
+
+    .form-field textarea {
+        min-height: 150px;
     }
 
     button[type="submit"] {
         width: 100%;
-        background-color: #28a745;
+        background-color: #007bff;
         color: white;
         font-size: 16px;
         font-weight: bold;
@@ -72,17 +78,18 @@
     }
 
     button[type="submit"]:hover {
-        background-color: #218838;
+        background-color: #0056b3;
     }
 
-    .back-link {
-        color: #007bff;
-        text-decoration: none;
-        font-weight: 500;
-    }
+    @media (max-width: 600px) {
+        .form-container {
+            padding: 24px;
+            margin: 20px;
+        }
 
-    .back-link:hover {
-        text-decoration: underline;
+        .form-container h2 {
+            font-size: 22px;
+        }
     }
 </style>
 {% endblock %}

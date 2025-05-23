@@ -1,88 +1,204 @@
 {% extends "ci_cd/base.html" %}
+
 {% block content %}
+<div class="student-dashboard-container">
+    <h1>🎓 Welcome, {{ user.username }}!</h1>
+    <p>Explore your learning modules, track your progress, and manage your repositories.</p>
 
-<div class="dashboard-container">
+    <div class="student-dashboard-grid">
+        <!-- Learn CI/CD -->
+        <div class="dashboard-card">
+            <h3>📘 Learn CI/CD</h3>
+            <p>Master the flow of Continuous Integration and Deployment</p>
+            <a href="{% url 'ci_cd_intro' %}" class="btn-tile">Start Learning</a>
+        </div>
 
-    <h2 class="greeting">👋 Welcome, {{ user.username }}!</h2>
-    <p class="intro">Here's your CI/CD learning dashboard.</p>
+        <!-- Enrolled Modules -->
+        <div class="dashboard-card">
+            <h3>📚 Your Modules</h3>
+            {% if enrolled_modules %}
+            <ul>
+                {% for module in enrolled_modules %}
+                <li>
+                    <a href="{% url 'module_detail' module.id %}" class="module-link">
+                        <strong>{{ module.title }}</strong>: {{ module.description }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No modules enrolled yet.</p>
+            {% endif %}
+            <a href="{% url 'browse_modules' %}" class="btn-tile alt">Browse Modules</a>
 
-    <!-- 📘 Learn CI/CD Link -->
-    <div class="section card">
-        <h3>📘 Learn CI/CD</h3>
-        <a href="{% url 'ci_cd_intro' %}" class="btn-learn">
-            📘 Start Learning About CI/CD
-        </a>
-    </div>
+        </div>
 
-    <!-- 📚 Enrolled Modules -->
-    <div class="section card">
-        <h3>📚 Enrolled Modules</h3>
-        {% if modules %}
-        <ul class="styled-list">
-            {% for module in modules %}
-            <a href="{% url 'module_detail' module.id %}" class="module-card">
-
-                <div class="module-info">
-                    <h4>{{ module.title }}</h4>
-                    <p>{{ module.description }}</p>
-                </div>
-            </a>
-
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p>You are not enrolled in any modules yet.</p>
-        {% endif %}
-    </div>
-
-    <!-- 💡 Git Basics Guide -->
-    <div class="section learn-section">
-        <a href="{% url 'git_basics' %}" class="btn-learn">
-            🔧 Learn How to Create a Git Repository
-        </a>
-    </div>
-
-
-    <!-- 🗂️ Repositories -->
-    <div class="section card">
-        <h3>🗂️ Your Git Repositories</h3>
-        {% if repos %}
-        <ul class="styled-list">
-            {% for repo in repos %}
-            <div class="repo-card">
-                <div class="repo-info">
-                    <strong>{{ repo.name }}</strong><br>
-                    <small>Created at {{ repo.created_at|date:"Y-m-d H:i" }}</small>
+        <!-- Repositories -->
+        <div class="dashboard-card">
+            <h3>🗂️ Your Repositories</h3>
+            {% if repositories %}
+            {% for repo in repositories %}
+            <div class="repo-box">
+                <p><strong>{{ repo.name }}</strong></p>
+                <p><small>Created: {{ repo.created_at|date:"Y-m-d H:i" }}</small></p>
+                <div class="repo-actions">
+                    <a href="{% url 'commit_and_push' repo.id %}" class="btn-sm">Push Code</a>
+                    <a href="{% url 'add_test_file' repo.id %}" class="btn-sm">Add Test File</a>
+                    <a href="{% url 'run_tests' repo.id %}" class="btn-sm">Run Tests</a>
                 </div>
             </div>
             {% endfor %}
-        </ul>
-        {% else %}
-        <p>You haven’t created any repositories yet.</p>
-        {% endif %}
-        <a href="{% url 'create_repo' %}" class="btn-create">➕ Create New Repository</a>
-    </div>
+            {% else %}
+            <p>No repositories found.</p>
+            {% endif %}
+            <a href="{% url 'create_repository' %}" class="btn-tile alt">+ Create New Repo</a>
+        </div>
 
-
-    <!-- 📈 Progress -->
-    <div class="section progress-section">
-        <h3>📈 Your Progress</h3>
-        {% if total_exercises %}
-        <div class="progress-wrapper">
+        <!-- Progress Overview -->
+        <div class="dashboard-card wide">
+            <h3>📈 Your Progress</h3>
+            {% if total_exercises %}
             <div class="progress-bar">
                 <div class="progress-fill" style="width: {{ progress_percent }}%;"></div>
             </div>
             <p>{{ completed }} of {{ total_exercises }} exercises completed ({{ progress_percent }}%)</p>
+            {% else %}
+            <p>No progress yet.</p>
+            {% endif %}
         </div>
-        {% else %}
-        <p>No exercises yet.</p>
-        {% endif %}
     </div>
-
-    <a href="{% url 'cicd_logs' %}" class="btn-learn">🐞 View CI/CD Logs & Debugging</a>
-
-
-
 </div>
+
+<style>
+    .student-dashboard-container {
+        padding: 30px 5vw;
+    }
+
+    .student-dashboard-container h1 {
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
+    .student-dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 36px;
+        margin-top: 30px;
+        grid-auto-rows: auto;
+        align-items: start;
+    }
+
+
+
+    .dashboard-card {
+        flex: 1 1 340px;
+        max-width: 400px;
+        background: #ffffff;
+        border: 1.5px solid #007bff;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+        font-size: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-self: start;
+        /* <- allow different heights */
+        height: auto;
+        /* <- remove any fixed or full height */
+    }
+
+
+
+    .dashboard-card.wide {
+        flex: 1 1 400px;
+        max-width: 820px;
+        grid-column:span 2;
+        /* ↓ optional to ensure it flows immediately below the first row */
+        margin-top: 0;
+    }
+
+
+
+    .dashboard-card h3 {
+        font-size: 20px;
+        margin-bottom: 16px;
+    }
+
+    .btn-tile {
+        display: inline-block;
+        margin-top: 16px;
+        padding: 12px 20px;
+        background: #ffc107;
+        color: #000;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-tile:hover {
+        background-color: #ffcf3d;
+    }
+
+    .btn-tile.alt {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-tile.alt:hover {
+        background-color: #0056b3;
+    }
+
+    .repo-box {
+        background: #f9f9f9;
+        padding: 18px;
+        border-radius: 12px;
+        margin-bottom: 18px;
+        border: 1px solid #dcdcdc;
+    }
+
+    .repo-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
+
+    .btn-sm {
+        font-size: 14px;
+        padding: 8px 14px;
+        background: #007bff;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .progress-bar {
+        height: 16px;
+        background: #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 16px 0;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(to right, #00c9a7, #007cf0);
+        transition: width 0.3s ease;
+    }
+
+    .module-link {
+        font-weight: 500;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .module-link:hover {
+        text-decoration: underline;
+        color: #0056b3;
+    }
+</style>
 
 {% endblock %}

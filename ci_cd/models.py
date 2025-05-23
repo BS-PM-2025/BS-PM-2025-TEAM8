@@ -3,6 +3,7 @@ from django.db import models
 
 # Custom User Model
 class User(AbstractUser):
+    is_instructor = models.BooleanField(default=False)
     groups = models.ManyToManyField(Group, related_name="ci_cd_users")
     user_permissions = models.ManyToManyField(Permission, related_name="ci_cd_users_permissions")
 
@@ -21,7 +22,6 @@ class Module(models.Model):
     def __str__(self):
         return self.title
 
-# Hands-on Exercises
 class Exercise(models.Model):
     DIFFICULTY_LEVELS = [(i, f"Level {i}") for i in range(1, 6)]  # Choices for difficulty (1-5)
 
@@ -29,13 +29,21 @@ class Exercise(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     difficulty = models.IntegerField(choices=DIFFICULTY_LEVELS, default=1)
+    steps = models.TextField(help_text="Detailed steps to complete this task")
+    resources = models.TextField(help_text="External resources (URLs) for reference", blank=True, null=True)
+    solution = models.TextField(help_text="Detailed solution for instructors (optional)")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ["difficulty", "created_at"]  # Sort by difficulty then by date
+        ordering = ["difficulty", "created_at"]
 
     def __str__(self):
         return f"{self.title} (Module: {self.module.title})"
+
+
+
+
+
 
 # Tracking Student Progress
 class Progress(models.Model):
@@ -70,3 +78,13 @@ class Repository(models.Model):
     def __str__(self):
         return self.name
 
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    is_instructor = models.BooleanField(default=False)
+    #profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    notifications_enabled = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.user.username} Profile"

@@ -1,0 +1,127 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+<div class="form-container">
+    <h2>📘 Create Exercise for Module: {{ module.title }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-grid">
+            <div class="form-field">
+                <label for="title">Title</label>
+                {{ form.title }}
+            </div>
+
+            <div class="form-field">
+                <label for="difficulty">Difficulty</label>
+                {{ form.difficulty }}
+            </div>
+
+            <div class="form-field full-width">
+                <label for="description">Description</label>
+                {{ form.description }}
+            </div>
+
+            <div class="form-field full-width">
+                <label for="steps">Steps</label>
+                {{ form.steps }}
+            </div>
+
+            <div class="form-field full-width">
+                <label for="resources">Resources</label>
+                {{ form.resources }}
+            </div>
+
+            <div class="form-field full-width">
+                <label for="solution">Solution</label>
+                {{ form.solution }}
+            </div>
+        </div>
+
+        <button type="submit">➕ Create Exercise</button>
+    </form>
+</div>
+
+<style>
+    .form-container {
+        max-width: 950px;
+        margin: 50px auto;
+        padding: 40px;
+        background-color: #ffffff;
+        border: 1.5px solid #007bff;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-container h2 {
+        text-align: center;
+        color: #007bff;
+        margin-bottom: 30px;
+        font-size: 26px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+    }
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-field.full-width {
+        grid-column: span 2;
+    }
+
+    .form-field label {
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #333;
+    }
+
+    .form-field input,
+    .form-field textarea,
+    .form-field select {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        background-color: #f9f9f9;
+        font-size: 15px;
+        color: #222;
+    }
+
+    .form-field textarea {
+        min-height: 100px;
+    }
+
+    button[type="submit"] {
+        margin-top: 30px;
+        width: 100%;
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+
+    @media (max-width: 600px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-field.full-width {
+            grid-column: span 1;
+        }
+    }
+</style>
+{% endblock %}

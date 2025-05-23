@@ -1,7 +1,7 @@
 {% extends "ci_cd/base.html" %}
 
 {% block content %}
-<div class="auth-container">
+<div class="auth-container module-detail">
     <h2>{{ module.title }}</h2>
     <p>{{ module.description }}</p>
 
@@ -9,26 +9,145 @@
 
     <h3>🧪 Exercises:</h3>
     {% if exercises %}
-    <ul class="styled-list">
+    <div class="exercise-grid">
         {% for exercise in exercises %}
-        <li>
-            <strong>{{ exercise.title }}</strong><br>
-            <small>{{ exercise.description }}</small><br>
-            <em>Difficulty: {{ exercise.get_difficulty_display }}</em><br>
+        <div class="exercise-card">
+            <strong>{{ exercise.title }}</strong>
+            <small>{{ exercise.description }}</small>
+            <em>Difficulty: {{ exercise.get_difficulty_display }}</em>
+            <p><strong>Steps:</strong> {{ exercise.steps }}</p>
+            <p><strong>Resources:</strong>
+                <a href="{{ exercise.resources }}" target="_blank">Link</a>
+            </p>
 
             {% if exercise.id in completed_ids %}
-            ✅ Completed
+            <span class="status-completed">✅ Completed</span>
+            <div><strong>Solution:</strong> {{ exercise.solution }}</div>
             {% else %}
             <form method="POST" action="{% url 'mark_complete' exercise.id %}">
                 {% csrf_token %}
                 <button type="submit" class="btn-complete">✅ Mark as Completed</button>
             </form>
             {% endif %}
-        </li>
+
+            {% if request.user.is_instructor %}
+            <div><strong>Solution:</strong> {{ exercise.solution }}</div>
+            {% endif %}
+        </div>
         {% endfor %}
-    </ul>
+    </div>
     {% else %}
     <p>No exercises available yet.</p>
     {% endif %}
 </div>
+
+<style>
+    body {
+        background: linear-gradient(to right, #f8f9fb, #eef1f6);
+    }
+
+    .module-detail h2 {
+        text-align: center;
+        font-size: 32px;
+        margin-bottom: 12px;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+
+    .module-detail h3 {
+        margin-top: 30px;
+        font-size: 24px;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .exercise-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+        margin-top: 20px;
+    }
+
+    .exercise-card {
+        background: #ffffff;
+        padding: 28px;
+        border-left: 6px solid #007bff;
+        border-radius: 16px;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.07);
+        transition: transform 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .exercise-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .exercise-card strong {
+        font-size: 20px;
+        color: #007bff;
+    }
+
+    .exercise-card small {
+        font-size: 15px;
+        color: #555;
+        display: block;
+        margin-top: 6px;
+    }
+
+    .exercise-card em {
+        display: inline-block;
+        margin: 10px 0;
+        font-size: 14px;
+        font-style: normal;
+        background-color: #e6f0ff;
+        color: #004085;
+        padding: 4px 10px;
+        border-radius: 6px;
+    }
+
+    .exercise-card p {
+        font-size: 15px;
+        margin: 10px 0;
+        color: #333;
+    }
+
+    .exercise-card a {
+        color: #007bff;
+        font-weight: 500;
+    }
+
+    .exercise-card a:hover {
+        text-decoration: underline;
+    }
+
+    .btn-complete {
+        background: linear-gradient(to right, #28a745, #218838);
+        color: white;
+        font-weight: 600;
+        padding: 10px 24px;
+        font-size: 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        margin-top: 12px;
+    }
+
+    .btn-complete:hover {
+        background: linear-gradient(to right, #218838, #1e7e34);
+    }
+
+    .status-completed {
+        display: inline-block;
+        margin-top: 10px;
+        font-weight: bold;
+        color: #155724;
+        background-color: #d4edda;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 15px;
+    }
+</style>
 {% endblock %}

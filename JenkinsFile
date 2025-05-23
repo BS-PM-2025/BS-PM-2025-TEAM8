@@ -11,8 +11,8 @@ pipeline {
         stage('Install Requirements') {
             steps {
                 echo '📦 Installing dependencies...'
-                sh 'python3 --version'  // ← changed to python3
-                sh 'pip3 install -r requirements.txt'  // ← changed to pip3
+                sh 'python3 --version'  
+                sh 'pip3 install -r requirements.txt'  
             }
         }
         stage('Run Django Checks') {

@@ -1,0 +1,62 @@
+{% extends "ci_cd/base.html" %}
+
+{% block content %}
+<div class="profile-view-container">
+    <h2>👤 My Profile</h2>
+
+    <div class="profile-info-box">
+        <p><strong>Username:</strong> {{ request.user.username }}</p>
+        <p><strong>Email:</strong> {{ request.user.email }}</p>
+        <p><strong>Instructor:</strong> {{ profile.is_instructor|yesno:"Yes,No" }}</p>
+        <p><strong>Notifications:</strong> {{ profile.notifications_enabled|yesno:"Enabled,Disabled" }}</p>
+    </div>
+
+    <a href="{% url 'edit_profile' %}" class="btn-profile-edit">✏️ Edit Profile</a>
+</div>
+
+<style>
+    .profile-view-container {
+        max-width: 700px;
+        margin: 50px auto;
+        background-color: #ffffff;
+        border: 1.5px solid #007bff;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        font-family: 'Poppins', sans-serif;
+        color: #1a1a1a;
+    }
+
+    .profile-view-container h2 {
+        font-size: 26px;
+        color: #007bff;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .profile-info-box {
+        background: #f9f9f9;
+        border-radius: 12px;
+        padding: 24px;
+        border: 1px solid #ddd;
+        margin-bottom: 20px;
+        font-size: 16px;
+        line-height: 1.8;
+    }
+
+    .btn-profile-edit {
+        display: inline-block;
+        padding: 12px 24px;
+        background-color: #007bff;
+        color: #ffffff;
+        font-weight: 600;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-profile-edit:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}
