@@ -5,9 +5,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import UserRegistrationForm, LoginForm ,RepositoryForm,ModuleForm,ExerciseForm,CodePushForm,TestFileForm,EditProfileForm
+from .forms import UserRegistrationForm, LoginForm ,RepositoryForm,ModuleForm,ExerciseForm,CodePushForm,TestFileForm,EditProfileForm,NotificationForm
 from django.contrib.auth.decorators import login_required
-from .models import Module, Enrollment , Repository ,Progress , Exercise ,Profile,Module
+from .models import Module, Enrollment , Repository ,Progress , Exercise ,Profile,Module,Notification
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 import requests
@@ -105,6 +105,7 @@ def dashboard_view(request):
         # Instructor Dashboard
         modules = Module.objects.all()
         students = User.objects.filter(is_instructor=False)
+        notifications = Notification.objects.filter(receiver=request.user, read=False)
         progress_data = {}
 
         for student in students:
@@ -127,7 +128,8 @@ def dashboard_view(request):
 
         return render(request, "ci_cd/instructor_dashboard.html", {
             "modules": modules,
-            "students": progress_data
+            "students": progress_data,
+            "notifications": notifications
         })
 
     else:
@@ -154,7 +156,7 @@ def ci_cd_intro(request):
     return render(request, "ci_cd/ci_cd_intro.html")
 
 
-#GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "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")
+#GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "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")
 
 
 @login_required
@@ -546,3 +548,27 @@ def edit_profile(request):
 def view_profile(request):
     profile = request.user.profile
     return render(request, "ci_cd/view_profile.html", {"profile": profile})
+
+@login_required
+def send_notification(request):
+    if not request.user.is_instructor:
+        return redirect('dashboard')  # Restrict access to instructors only
+
+    if request.method == "POST":
+        form = NotificationForm(request.POST)
+        if form.is_valid():
+            notif = form.save(commit=False)
+            notif.sender = request.user
+            notif.save()
+            return redirect('dashboard')
+    else:
+        form = NotificationForm()
+
+    return render(request, "ci_cd/send_notification.html", {"form": form})
+
+@login_required
+def student_notifications(request):
+    notifications = Notification.objects.filter(receiver=request.user).order_by('-created_at')
+    return render(request, 'ci_cd/student_notifications.html', {
+        'notifications': notifications
+    })
