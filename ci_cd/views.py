@@ -572,3 +572,14 @@ def student_notifications(request):
     return render(request, 'ci_cd/student_notifications.html', {
         'notifications': notifications
     })
+
+
+@login_required
+def delete_account(request):
+    if request.method == "POST":
+        user = request.user
+        logout(request)  # Log the user out first
+        user.delete()    # Delete the user
+        messages.success(request, "Your account has been deleted.")
+        return redirect("signup")
+    return render(request, "ci_cd/delete_account.html")
