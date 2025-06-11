@@ -1,0 +1,60 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+<div class="notifications-container">
+    <h2>📬 Your Notifications</h2>
+    {% if notifications %}
+    <ul class="notification-list">
+        {% for note in notifications %}
+        <li class="{% if not note.read %}unread{% endif %}">
+            <strong>From:</strong> {{ note.sender.username }}<br>
+            <strong>Message:</strong> {{ note.message }}<br>
+            <small>{{ note.created_at|date:"Y-m-d H:i" }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No notifications.</p>
+    {% endif %}
+</div>
+
+<style>
+    .notifications-container {
+        max-width: 700px;
+        margin: 40px auto;
+        background: #ffffff;
+        color: #333;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e0e0e0;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .notifications-container h2 {
+        text-align: center;
+        color: #007bff;
+        margin-bottom: 25px;
+    }
+
+    .notification-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .notification-list li {
+        border-bottom: 1px solid #e0e0e0;
+        padding: 16px 0;
+    }
+
+    .notification-list li.unread {
+        background-color: #f1f8ff;
+        border-left: 4px solid #007bff;
+        padding-left: 12px;
+    }
+
+    .notification-list small {
+        color: #666;
+        font-size: 13px;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+<div class="browse-container">
+    <h2>📚 Browse Available Modules</h2>
+
+    {% if modules %}
+    <div class="module-grid">
+        {% for module in modules %}
+        <div class="module-card">
+            <h3>{{ module.title }}</h3>
+            <p>{{ module.description }}</p>
+            <a href="{% url 'enroll_in_module' module.id %}" class="btn-enroll">Enroll</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No modules available for enrollment right now.</p>
+    {% endif %}
+</div>
+
+<style>
+    .browse-container {
+        padding: 40px 5vw;
+    }
+
+    .browse-container h2 {
+        font-size: 26px;
+        margin-bottom: 30px;
+    }
+
+    .module-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 36px;
+    }
+
+    .module-card {
+        background: #ffffff;
+        border: 1.5px solid #007bff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .module-card h3 {
+        margin-bottom: 10px;
+        font-size: 20px;
+        color: #1a1a1a;
+    }
+
+    .module-card p {
+        font-size: 15px;
+        color: #444;
+        flex-grow: 1;
+    }
+
+    .btn-enroll {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 8px;
+        display: inline-block;
+        width: fit-content;
+        transition: background 0.2s ease;
+    }
+
+    .btn-enroll:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}

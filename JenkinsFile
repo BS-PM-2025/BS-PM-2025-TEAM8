@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Repo') {
+            steps {
+                echo '✅ Cloning repository...'
+                checkout scm
+            }
+        }
+        stage('Install Requirements') {
+            steps {
+                echo '📦 Installing dependencies...'
+                sh 'python3 --version'  
+                sh 'pip3 install -r requirements.txt'  
+            }
+        }
+        stage('Run Django Checks') {
+            steps {
+                echo '🔍 Checking Django project...'
+                sh 'python3 manage.py check'
+            }
+        }
+        stage('Run Migrations') {
+            steps {
+                echo '📂 Running migrations...'
+                sh 'python3 manage.py migrate'
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                echo '🧪 Running tests...'
+                sh 'python3 manage.py test'
+            }
+        }
+    }
+    post {
+        success {
+            echo '🎉 Build and tests succeeded!'
+        }
+        failure {
+            echo '❌ Build failed!'
+        }
+    }
+}

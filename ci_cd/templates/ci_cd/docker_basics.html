@@ -1,0 +1,133 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+<div class="docker-guide">
+    <h2>🐳 Docker Basics – Learn Containerization</h2>
+
+    <p><strong>What is Docker?</strong></p>
+    <p>
+        Docker is a tool that helps you package your application and everything it needs
+        (like Python, dependencies, and files) into a small unit called a <strong>container</strong>.
+        A container runs the same way on any computer, so you never have to worry about
+        "it works on my machine but not yours" problems again.
+    </p>
+
+    <p><strong>Why should you care?</strong></p>
+    <ul>
+        <li>✅ Run your project on any computer without setup issues</li>
+        <li>✅ Simulate real-world DevOps workflows</li>
+        <li>✅ Automate testing and deployment inside a controlled environment</li>
+    </ul>
+
+    <p><strong>What does Docker do to your repository?</strong></p>
+    <ol>
+        <li>Reads the <code>Dockerfile</code> to know how to install dependencies</li>
+        <li>Builds an <strong>image</strong> – a snapshot of your app environment</li>
+        <li>Runs a <strong>container</strong> – a working instance of your app</li>
+    </ol>
+
+    <p>
+        This means your code can run in an isolated, consistent way anywhere — even in production.
+    </p>
+
+    <h3>📦 Common Docker Commands to Try:</h3>
+    <pre><code># Pull a base Python image
+docker pull python
+
+# Run a basic Python shell in a container
+docker run -it python
+
+# Build a Docker image from your repo
+docker build -t my-ci-app .
+
+# Run your app in a container
+docker run my-ci-app
+
+# List all containers
+docker ps -a
+
+# Stop and remove containers
+docker stop &lt;container_id&gt;
+docker rm &lt;container_id&gt;
+</code></pre>
+
+    <p>Try these commands locally if you have Docker installed. It's a great way to understand containerization by
+        doing.</p>
+
+    <a href="{% url 'dashboard' %}" class="btn-back">← Back to Dashboard</a>
+</div>
+
+<style>
+    .docker-guide {
+        background-color: #1e1e1e;
+        color: #f8f8f2;
+        padding: 40px;
+        border-radius: 14px;
+        box-shadow: 0 0 12px rgba(0, 255, 255, 0.12);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 900px;
+        margin: 50px auto;
+    }
+
+    .docker-guide h2 {
+        font-size: 28px;
+        color: #00ffff;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #444;
+        padding-bottom: 10px;
+    }
+
+    .docker-guide p {
+        font-size: 16px;
+        line-height: 1.7;
+        color: #dddddd;
+        margin-bottom: 16px;
+    }
+
+    .docker-guide ul,
+    .docker-guide ol {
+        padding-left: 20px;
+        margin-bottom: 16px;
+    }
+
+    .docker-guide li {
+        margin-bottom: 8px;
+    }
+
+    .docker-guide code {
+        background-color: #272727;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        color: #00ffcc;
+    }
+
+    .docker-guide pre {
+        background-color: #121212;
+        color: #00ffcc;
+        padding: 16px;
+        border: 1px solid #00ffcc;
+        border-radius: 10px;
+        font-size: 14px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        margin-top: 20px;
+        line-height: 1.5;
+    }
+
+    .btn-back {
+        display: inline-block;
+        margin-top: 30px;
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 22px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-back:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}

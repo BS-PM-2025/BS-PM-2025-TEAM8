@@ -1,0 +1,88 @@
+{% extends "ci_cd/base.html" %}
+
+{% block content %}
+<div class="create-repository-container">
+    <h2>📁 Create a New Repository</h2>
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-field">
+            <label for="id_name">Repository Name</label>
+            {{ form.name }}
+        </div>
+
+        <button type="submit">➕ Create Repository</button>
+    </form>
+    <p style="text-align:center; margin-top: 20px;">
+        <a href="{% url 'dashboard' %}" class="back-link">← Back to Dashboard</a>
+    </p>
+</div>
+
+<style>
+    .create-repository-container {
+        max-width: 600px;
+        margin: 60px auto;
+        padding: 40px;
+        background-color: #ffffff;
+        border: 1.5px solid #007bff;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .create-repository-container h2 {
+        text-align: center;
+        font-size: 24px;
+        color: #007bff;
+        margin-bottom: 30px;
+    }
+
+    .form-field {
+        margin-bottom: 20px;
+    }
+
+    .form-field label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .form-field input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        background-color: #f9f9f9;
+        font-size: 15px;
+        color: #333;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        background-color: #28a745;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #218838;
+    }
+
+    .back-link {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}

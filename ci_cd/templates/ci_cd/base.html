@@ -1,0 +1,195 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CI/CD Platform{% endblock %}</title>
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">-->
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="nav-left">
+                <a href="{% url 'home' %}">CI/CD Platform</a>
+            </div>
+            <div class="nav-right">
+
+                {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'student_notifications' %}">🔔 Notifications</a>
+                {% if user.profile.profile_picture %}
+                <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" class="profile-avatar">
+                {% endif %}
+                <a href="{% url 'view_profile' %}">Profile</a>
+                <a href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'signup' %}">Sign Up</a>
+                {% endif %}
+            </div>
+
+        </nav>
+    </header>
+
+    <div class="content">
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            {% if "test-result" in message.tags %}
+            <div class="test-output-message {{ message.tags }}">
+                <pre>{{ message }}</pre>
+            </div>
+            {% else %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+
+<style>
+    .test-output-message {
+        background-color: #121212;
+        color: #00ffcc;
+        padding: 20px;
+        font-size: 14px;
+        border: 1px solid #00ffcc;
+        border-radius: 10px;
+        font-family: 'Courier New', monospace;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+        max-width: 100%;
+        margin: 30px auto;
+    }
+
+    /* 🌐 Base Layout */
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fefefe;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* ✅ Sticky Transparent Navbar */
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid #e2e2e2;
+    }
+
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 60px;
+        max-width: 100vw;
+        box-sizing: border-box;
+    }
+
+
+    .nav-left a {
+        font-size: 20px;
+        font-weight: bold;
+        color: #222;
+        text-decoration: none;
+    }
+
+    .nav-right a {
+        margin-left: 20px;
+        padding: 10px 18px;
+        font-weight: 600;
+        color: #333;
+        text-decoration: none;
+        background: #fff;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        transition: all 0.3s ease;
+    }
+
+    .nav-right a:hover {
+        background: #ffc107;
+        border-color: #ffc107;
+        color: #000;
+    }
+
+    /* 📦 Page Content Container */
+    .content {
+        padding-block: 0px;
+        padding-inline: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+
+
+    /* ✅ Message Boxes */
+    .messages {
+        margin-bottom: 20px;
+    }
+
+    .alert {
+        padding: 14px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+        margin-bottom: 15px;
+        font-size: 15px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .alert.success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert.warning {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .alert.error {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    /* 🧪 Test Output Styling */
+    .test-output-message {
+        background-color: #f0f0f0;
+        color: #222;
+        padding: 16px;
+        font-family: 'Courier New', monospace;
+        border-radius: 10px;
+        border-left: 4px solid #007bff;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        margin: 20px 0;
+    }
+
+    .profile-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #007bff;
+        margin-left: 10px;
+        vertical-align: middle;
+        margin-top: 2px;
+        /* <- adjust this value to fine-tune alignment */
+    }
+</style>
+
+</html>

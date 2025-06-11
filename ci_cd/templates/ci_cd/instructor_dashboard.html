@@ -1,0 +1,175 @@
+{% extends "ci_cd/base.html" %}
+
+{% block content %}
+<div class="instructor-dashboard-container">
+    <h1>👋 Welcome, {{ user.username }}!</h1>
+    <h2>Your Instructor Dashboard</h2>
+    <p>As an instructor, you can manage your courses, students, and repositories here.</p>
+
+    <div class="instructor-dashboard-grid">
+        <!-- Manage Courses -->
+        <div class="dashboard-card">
+            <h3>📚 Manage Courses</h3>
+            {% for module in modules %}
+            <ul>
+                <li>
+                    <strong>{{ module.title }}</strong><br>
+                    <small>{{ module.description }}</small>
+                </li>
+            </ul>
+            {% empty %}
+            <p>No courses available.</p>
+            {% endfor %}
+            <a href="{% url 'create_module' %}" class="btn-tile alt">➕ Create New Course</a>
+        </div>
+
+        <!-- Assign Exercises -->
+        <div class="dashboard-card">
+            <h3>🧪 Assign Exercises</h3>
+            <p>Assign exercises to your modules.</p>
+            {% for module in modules %}
+            <a href="{% url 'create_exercise' module.id %}" class="btn-tile">Add to {{ module.title }}</a>
+            {% empty %}
+            <p>No modules to assign exercises.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Student Progress -->
+        <div class="dashboard-card">
+            <h3>📈 Student Progress</h3>
+            <p>Track progress across all your students and modules.</p>
+            <a href="{% url 'send_notification' %}" class="btn-tile">Send Notification</a>
+
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Completed</th>
+                        <th>Total</th>
+                        <th>Progress</th>
+                        <th>Needs Help?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student, data in students.items %}
+                    <tr>
+                        <td>{{ student.username }}</td>
+                        <td>{{ data.completed }}</td>
+                        <td>{{ data.total_exercises }}</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ data.progress_percent }}%;"></div>
+                            </div>
+                            {{ data.progress_percent }}%
+                        </td>
+                        <td>
+                            {% if data.needs_help %}
+                            <span style="color: red; font-weight: bold;">⚠️ Yes</span>
+                            {% else %}
+                            <span style="color: green;">✔️ No</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .instructor-dashboard-container {
+        padding: 30px 5vw;
+    }
+
+    .instructor-dashboard-container h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .instructor-dashboard-container h2 {
+        font-size: 22px;
+        margin-bottom: 8px;
+    }
+
+    .instructor-dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 40px;
+        align-items: start;
+        margin-top: 30px;
+    }
+
+    .dashboard-card {
+        background: #ffffff;
+        border: 1.5px solid #007bff;
+        border-radius: 20px;
+        padding: 30px 25px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+        font-size: 16px;
+    }
+
+    .dashboard-card h3 {
+        font-size: 20px;
+        margin-bottom: 16px;
+    }
+
+    .btn-tile {
+        display: inline-block;
+        margin-top: 16px;
+        padding: 12px 20px;
+        background: #ffc107;
+        color: #000;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-tile:hover {
+        background-color: #ffcf3d;
+    }
+
+    .btn-tile.alt {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-tile.alt:hover {
+        background-color: #0056b3;
+    }
+
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        font-size: 14px;
+    }
+
+    .styled-table thead {
+        background: #007bff;
+        color: white;
+    }
+
+    .styled-table th,
+    .styled-table td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .progress-bar {
+        height: 12px;
+        background: #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 4px;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: #28a745;
+        transition: width 0.3s ease;
+    }
+</style>
+{% endblock %}

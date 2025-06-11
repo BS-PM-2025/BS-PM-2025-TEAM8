@@ -1,0 +1,92 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+<div class="git-guide-container">
+    <h2>🔧 Git Basics</h2>
+    <p>This guide explains how to create your first Git repository and push code to GitHub.</p>
+
+    <div class="git-step">
+        <h3>Step 1: Initialize a Git repository</h3>
+        <pre><code>git init</code></pre>
+    </div>
+
+    <div class="git-step">
+        <h3>Step 2: Add your files</h3>
+        <pre><code>git add .</code></pre>
+    </div>
+
+    <div class="git-step">
+        <h3>Step 3: Commit your changes</h3>
+        <pre><code>git commit -m "Initial commit"</code></pre>
+    </div>
+
+    <div class="git-step">
+        <h3>Step 4: Connect to GitHub</h3>
+        <pre><code>git remote add origin https://github.com/your-username/your-repo.git</code></pre>
+    </div>
+
+    <div class="git-step">
+        <h3>Step 5: Push your code</h3>
+        <pre><code>git push -u origin main</code></pre>
+    </div>
+
+    <p>Once pushed, you can submit this GitHub link for feedback!</p>
+    <a href="{% url 'dashboard' %}" class="btn-back">← Back to Dashboard</a>
+</div>
+
+<style>
+    .git-guide-container {
+        max-width: 800px;
+        margin: 60px auto;
+        padding: 40px;
+        background: #ffffff;
+        border: 1.5px solid #007bff;
+        border-radius: 16px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+
+    .git-guide-container h2 {
+        font-size: 28px;
+        color: #007bff;
+        margin-bottom: 20px;
+    }
+
+    .git-guide-container h3 {
+        margin-top: 30px;
+        font-size: 20px;
+        color: #333;
+    }
+
+    .git-guide-container p {
+        font-size: 16px;
+        margin-top: 12px;
+        color: #444;
+    }
+
+    .git-step pre {
+        background-color: #121212;
+        color: #00ffcc;
+        padding: 14px 18px;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 15px;
+        overflow-x: auto;
+        margin-top: 8px;
+    }
+
+    .btn-back {
+        display: inline-block;
+        margin-top: 30px;
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-back:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}

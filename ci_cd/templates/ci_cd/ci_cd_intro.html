@@ -1,0 +1,154 @@
+{% extends "ci_cd/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="intro-wrapper">
+    <div class="intro-page">
+        <div class="intro-header">
+            <h1>📘 Introduction to CI/CD</h1>
+            <p>Understand the core concepts of Continuous Integration & Continuous Deployment.</p>
+        </div>
+
+        <div class="intro-body">
+            <img src="{% static 'img/ci_cd_diagram.jpg' %}" alt="CI/CD Flow" class="intro-img">
+
+            <div class="intro-section">
+                <h3>🔧 What is CI?</h3>
+                <p>
+                    Continuous Integration (CI) is the practice of automating the integration of code changes.
+                    Developers frequently push code to a shared repository, where it's automatically tested and built.
+                </p>
+            </div>
+
+            <div class="intro-section">
+                <h3>🚀 What is CD?</h3>
+                <p>
+                    Continuous Deployment (CD) ensures that code changes are automatically delivered to production
+                    after passing tests. This allows faster and more reliable delivery of features.
+                </p>
+            </div>
+
+            <div class="intro-section">
+                <h3>💡 Real-Life Example</h3>
+                <p>
+                    Think of a developer pushing code → it triggers automated testing in Jenkins → if successful,
+                    Docker builds a container → then Kubernetes deploys it live. All hands-free!
+                </p>
+            </div>
+
+            <div class="intro-section">
+                <h3>🔗 Coming Soon</h3>
+                <ul>
+                    <li>🎥 Embedded videos from instructors</li>
+                    <li>🔗 GitHub practice repositories</li>
+                    <li>📝 CI/CD challenges to try yourself</li>
+                </ul>
+            </div>
+
+            <div class="back-link">
+                <a href="{% url 'dashboard' %}">← Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 🩶 Outer Gray Container */
+    .intro-wrapper {
+        background-color: #f3f4f6;
+        padding: 80px 20px;
+    }
+
+    /* 🧾 Inner Lesson Card */
+    .intro-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 50px 40px;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+        font-family: 'Poppins', sans-serif;
+        color: #333;
+    }
+
+    /* Page Header */
+    .intro-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .intro-header h1 {
+        font-size: 36px;
+        color: #222;
+        margin-bottom: 10px;
+    }
+
+    .intro-header p {
+        font-size: 18px;
+        color: #666;
+    }
+
+    /* Image */
+    .intro-img {
+        width: 100%;
+        border-radius: 14px;
+        margin: 30px 0;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Section Cards */
+    .intro-section {
+        background: #f9f9f9;
+        border-left: 6px solid #007bff;
+        padding: 25px 30px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        transition: transform 0.3s ease;
+    }
+
+    .intro-section:hover {
+        transform: translateY(-2px);
+    }
+
+    .intro-section h3 {
+        font-size: 22px;
+        color: #007bff;
+        margin-bottom: 12px;
+    }
+
+    .intro-section p,
+    .intro-section ul {
+        font-size: 16px;
+        line-height: 1.7;
+        color: #444;
+    }
+
+    .intro-section ul {
+        padding-left: 20px;
+    }
+
+    .intro-section ul li {
+        margin-bottom: 8px;
+    }
+
+    /* Back link */
+    .back-link {
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    .back-link a {
+        font-weight: bold;
+        color: #007bff;
+        text-decoration: none;
+        font-size: 16px;
+        transition: all 0.2s ease;
+    }
+
+    .back-link a:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
