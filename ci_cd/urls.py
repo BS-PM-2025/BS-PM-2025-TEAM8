@@ -46,5 +46,10 @@ urlpatterns = [
     path('instructor_quizzes/', views.instructor_quizzes, name='instructor_quizzes'),
     path('student_quizzes/', views.student_quizzes, name='student_quizzes'),
     path('take_quiz/<int:quiz_id>/', views.take_quiz, name='take_quiz'),
+    path('manage_users/', views.manage_users, name='manage_users'),
+    path('admin_panel/', views.admin_dashboard, name='admin_dashboard'),
+    path('approve_module/<int:module_id>/', views.approve_module, name='approve_module'),
+    path('reject_module/<int:module_id>/', views.reject_module, name='reject_module'),
+
 
 ]

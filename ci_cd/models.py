@@ -16,6 +16,8 @@ class Module(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    is_approved = models.BooleanField(default=False)
+
     class Meta:
         ordering = ["-created_at"]  # Show newest modules first
 

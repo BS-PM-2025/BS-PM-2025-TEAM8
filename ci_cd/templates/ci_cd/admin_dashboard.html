@@ -1,0 +1,124 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+<div class="admin-container">
+    <h2>⚙️ Admin Dashboard</h2>
+
+    <!-- Manage Users -->
+    <h3>👥 Users</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% if user.is_superuser %}
+                    Admin
+                    {% elif user.is_instructor %}
+                    Instructor
+                    {% else %}
+                    Student
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.is_active %}
+                    ✅ Active
+                    {% else %}
+                    ❌ Inactive
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Manage Modules -->
+    <h3>📚 Modules</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>description</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for module in modules %}
+            <tr>
+                <td>{{ module.title }}</td>
+                <td>{{ module.description }}</td>
+                <td>{{ module.created_at|date:"Y-m-d H:i" }}</td>
+                <td>
+                    {% if module.is_approved %}
+                    ✅ Approved
+                    {% else %}
+                    ⏳ Pending
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not module.is_approved %}
+                    <a href="{% url 'approve_module' module.id %}" class="btn-sm">Approve</a>
+                    <a href="{% url 'reject_module' module.id %}" class="btn-sm danger">Reject</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<style>
+    .admin-container {
+        max-width: 1100px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 40px;
+    }
+
+    th,
+    td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #ccc;
+        text-align: center;
+    }
+
+    th {
+        background: #007bff;
+        color: white;
+        border-radius: 5px;
+    }
+
+    .btn-sm {
+        font-size: 14px;
+        padding: 8px 12px;
+        background: #28a745;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        margin: 2px;
+    }
+
+    .btn-sm.danger {
+        background: #dc3545;
+    }
+</style>
+{% endblock %}

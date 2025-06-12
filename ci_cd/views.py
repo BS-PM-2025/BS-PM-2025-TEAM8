@@ -15,7 +15,7 @@ import base64
 import subprocess
 import shutil
 from django.db.models import Sum 
-
+from django.contrib.auth.decorators import user_passes_test
 
 
 # Get the User model
@@ -56,13 +56,19 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 print(f"✅ {username} logged in successfully!")  # Debugging
-                return redirect("dashboard")
+
+                if user.is_superuser:
+                    return redirect("admin_dashboard")
+                else:
+                    return redirect("dashboard")
+
             else:
                 messages.error(request, "Invalid username or password")
                 print("❌ Authentication failed!")  # Debugging
     else:
         form = LoginForm()
     return render(request, "ci_cd/login.html", {"form": form})
+
 
 # User Logout
 def logout_view(request):
@@ -673,3 +679,50 @@ def take_quiz(request, quiz_id):
 
     return render(request, 'ci_cd/take_quiz.html', {'quiz': quiz, 'questions': questions})
 
+
+
+
+# דקורטור שיבדוק שהמשתמש הוא אדמין
+def admin_required(view_func):
+    return user_passes_test(lambda u: u.is_superuser)(view_func)
+
+@login_required
+@admin_required
+def manage_users(request):
+    users = User.objects.all().order_by('-date_joined')
+    return render(request, "ci_cd/manage_users.html", {"users": users})
+
+
+@login_required
+@admin_required
+def manage_modules(request):
+    modules = Module.objects.all().order_by('-created_at')
+    return render(request, "ci_cd/manage_modules.html", {"modules": modules})
+
+@login_required
+@admin_required
+def approve_module(request, module_id):
+    module = get_object_or_404(Module, id=module_id)
+    module.is_approved = True
+    module.save()
+    return redirect('admin_dashboard')
+
+
+@login_required
+@admin_required
+def reject_module(request, module_id):
+    module = get_object_or_404(Module, id=module_id)
+    module.delete()
+    return redirect('admin_dashboard')
+
+
+
+@login_required
+@admin_required
+def admin_dashboard(request):
+    users = User.objects.all().order_by('-date_joined')
+    modules = Module.objects.all().order_by('-created_at')
+    return render(request, "ci_cd/admin_dashboard.html", {
+        "users": users,
+        "modules": modules
+    })

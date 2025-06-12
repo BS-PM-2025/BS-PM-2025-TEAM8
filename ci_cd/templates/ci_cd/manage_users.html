@@ -1,0 +1,73 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+<div class="admin-container">
+    <h2>👥 users managment</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>username</th>
+                <th>mail</th>
+                <th>role</th>
+                <th>status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% if user.is_superuser %}
+                    Admin
+                    {% elif user.is_instructor %}
+                    Instructor
+                    {% else %}
+                    Student
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.is_active %}
+                    ✅ Active
+                    {% else %}
+                    ❌ Inactive
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'dashboard' %}" class="btn-tile alt">⬅ חזרה לדשבורד</a>
+</div>
+
+<style>
+    .admin-container {
+        max-width: 900px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #ccc;
+        text-align: center;
+    }
+
+    th {
+        background: #007bff;
+        color: white;
+        border-radius: 5px;
+    }
+</style>
+
+{% endblock %}
