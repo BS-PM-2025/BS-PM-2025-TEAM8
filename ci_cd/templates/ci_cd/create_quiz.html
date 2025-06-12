@@ -1,0 +1,28 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+
+<div class="form-container">
+    <h2>📝 Create New Quiz</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-tile alt">➕ Create Quiz</button>
+    </form>
+
+    <a href="{% url 'dashboard' %}" class="btn-tile alt">⬅ Back to Dashboard</a>
+</div>
+
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #fff;
+        border: 1.5px solid #007bff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+</style>
+
+{% endblock %}

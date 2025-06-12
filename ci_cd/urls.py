@@ -41,5 +41,10 @@ urlpatterns = [
     path("delete_account/", views.delete_account, name="delete_account"),
     path('send_notification/', views.send_notification, name='send_notification'),
     path("notifications/", views.student_notifications, name="student_notifications"),
+    path('create_quiz/', views.create_quiz, name='create_quiz'),
+    path('quiz/<int:quiz_id>/add_question/', views.add_quiz_question, name='add_quiz_question'),
+    path('instructor_quizzes/', views.instructor_quizzes, name='instructor_quizzes'),
+    path('student_quizzes/', views.student_quizzes, name='student_quizzes'),
+    path('take_quiz/<int:quiz_id>/', views.take_quiz, name='take_quiz'),
 
 ]

@@ -1,0 +1,43 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+
+<div class="form-container">
+    <h2>📝 {{ quiz.title }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {% for question in questions %}
+        <div class="question-block">
+            <p><strong>Q{{ forloop.counter }}: {{ question.question_text }}</strong></p>
+
+            <label><input type="radio" name="question_{{ question.id }}" value="A"> {{ question.option_a }}</label><br>
+            <label><input type="radio" name="question_{{ question.id }}" value="B"> {{ question.option_b }}</label><br>
+            <label><input type="radio" name="question_{{ question.id }}" value="C"> {{ question.option_c }}</label><br>
+            <label><input type="radio" name="question_{{ question.id }}" value="D"> {{ question.option_d }}</label><br>
+        </div>
+        <hr>
+        {% endfor %}
+
+        <button type="submit" class="btn-tile alt">Submit Quiz</button>
+    </form>
+
+    <a href="{% url 'student_quizzes' %}" class="btn-tile alt">⬅ Back to Quizzes</a>
+</div>
+
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 40px auto;
+        background: #fff;
+        border: 1.5px solid #007bff;
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+
+    .question-block {
+        margin-bottom: 20px;
+    }
+</style>
+
+{% endblock %}

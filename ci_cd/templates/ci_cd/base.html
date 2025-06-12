@@ -190,6 +190,36 @@
         margin-top: 2px;
         /* <- adjust this value to fine-tune alignment */
     }
+
+    .btn-tile {
+        display: inline-block;
+        padding: 12px 24px;
+        background: linear-gradient(to right, #007bff, #00c9a7);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: transform 0.2s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 16px;
+        text-align: center;
+    }
+
+    .btn-tile:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        background: linear-gradient(to right, #0056b3, #00a98f);
+    }
+
+    .btn-tile.alt {
+        background: linear-gradient(to right, #ffc107, #ff9900);
+        color: #000;
+    }
+
+    .btn-tile.alt:hover {
+        background: linear-gradient(to right, #ffb300, #ff6f00);
+    }
 </style>
 
 </html>

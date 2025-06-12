@@ -1,0 +1,44 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+
+<div class="dashboard-container">
+    <h2>📝 Manage Your Quizzes</h2>
+
+    <div class="quiz-grid">
+        {% for quiz in quizzes %}
+        <div class="dashboard-card">
+            <h3>{{ quiz.title }}</h3>
+            <p>{{ quiz.description }}</p>
+            <p><small>Created: {{ quiz.created_at|date:"Y-m-d H:i" }}</small></p>
+            <a href="{% url 'add_quiz_question' quiz.id %}" class="btn-tile alt">➕ Add Questions</a>
+        </div>
+        {% empty %}
+        <p>No quizzes created yet.</p>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'dashboard' %}" class="btn-tile alt">⬅ Back to Dashboard</a>
+</div>
+
+<style>
+    .dashboard-container {
+        padding: 30px 5vw;
+    }
+
+    .quiz-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+    }
+
+    .dashboard-card {
+        background: #ffffff;
+        border: 1.5px solid #007bff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+</style>
+
+{% endblock %}

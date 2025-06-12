@@ -5,17 +5,16 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import UserRegistrationForm, LoginForm ,RepositoryForm,ModuleForm,ExerciseForm,CodePushForm,TestFileForm,EditProfileForm,NotificationForm
+from .forms import UserRegistrationForm, LoginForm ,RepositoryForm,ModuleForm,ExerciseForm,CodePushForm,TestFileForm,EditProfileForm,NotificationForm,QuizForm, QuizQuestionForm
 from django.contrib.auth.decorators import login_required
-from .models import Module, Enrollment , Repository ,Progress , Exercise ,Profile,Module,Notification
+from .models import Module, Enrollment , Repository ,Progress , Exercise ,Profile,Module,Notification,Quiz, QuizQuestion
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 import requests
 import base64
 import subprocess
 import shutil
-from django.db.models import Sum
-
+from django.db.models import Sum 
 
 
 
@@ -589,3 +588,88 @@ def delete_account(request):
         messages.success(request, "Your account has been deleted.")
         return redirect("signup")
     return render(request, "ci_cd/delete_account.html")
+
+
+
+
+
+@login_required
+def create_quiz(request):
+    if not request.user.is_instructor:
+        return redirect('dashboard')  # block non-instructors
+
+    if request.method == 'POST':
+        form = QuizForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Quiz created successfully!")
+            return redirect('dashboard')
+    else:
+        form = QuizForm()
+
+    return render(request, 'ci_cd/create_quiz.html', {'form': form})
+
+
+@login_required
+def add_quiz_question(request, quiz_id):
+    if not request.user.is_instructor:
+        return redirect('dashboard')
+
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+
+    if request.method == 'POST':
+        form = QuizQuestionForm(request.POST)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.quiz = quiz
+            question.save()
+            messages.success(request, "Question added successfully!")
+            return redirect('add_quiz_question', quiz_id=quiz.id)
+    else:
+        form = QuizQuestionForm()
+
+    return render(request, 'ci_cd/add_quiz_question.html', {'form': form, 'quiz': quiz})
+
+@login_required
+def instructor_quizzes(request):
+    if not request.user.is_instructor:
+        return redirect('dashboard')
+
+    quizzes = Quiz.objects.all()
+    return render(request, 'ci_cd/instructor_quizzes.html', {'quizzes': quizzes})
+
+
+@login_required
+def student_quizzes(request):
+    enrolled_modules = Module.objects.filter(enrollment__user=request.user)
+    quizzes = Quiz.objects.filter(module__in=enrolled_modules)
+    return render(request, 'ci_cd/student_quizzes.html', {'quizzes': quizzes})
+
+
+@login_required
+def take_quiz(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    questions = quiz.questions.all()
+
+    if request.method == 'POST':
+        correct = 0
+        total = questions.count()
+
+        for question in questions:
+            selected = request.POST.get(f'question_{question.id}')
+            if selected == question.correct_option:
+                correct += 1
+
+        score = int((correct / total) * 100)
+
+        # ✅ Save progress (create or update existing)
+        progress, created = Progress.objects.get_or_create(user=request.user, quiz=quiz)
+        progress.quiz_score = score
+        progress.completed = True
+        progress.save()
+
+        messages.success(request, f"You scored {score}%!")
+        return redirect('student_quizzes')
+
+    return render(request, 'ci_cd/take_quiz.html', {'quiz': quiz, 'questions': questions})
+

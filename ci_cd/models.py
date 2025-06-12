@@ -39,18 +39,45 @@ class Exercise(models.Model):
 
     def __str__(self):
         return f"{self.title} (Module: {self.module.title})"
+    
 
 
+class Quiz(models.Model):
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='quizzes')
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+
+class QuizQuestion(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='questions')
+    question_text = models.TextField()
+    option_a = models.CharField(max_length=255)
+    option_b = models.CharField(max_length=255)
+    option_c = models.CharField(max_length=255)
+    option_d = models.CharField(max_length=255)
+    correct_option = models.CharField(max_length=1, choices=[
+        ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')
+    ])
+
+    def __str__(self):
+        return self.question_text
 
 
 
 
 # Tracking Student Progress
 class Progress(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="progress")
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="progress")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, null=True, blank=True)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
     completed = models.BooleanField(default=False)
     score = models.IntegerField(null=True, blank=True)
+    quiz_score = models.IntegerField(null=True, blank=True)
+
 
     class Meta:
         unique_together = ("user", "exercise")  # Prevents duplicate progress records
@@ -99,3 +126,4 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"To {self.receiver.username}: {self.message[:30]}"
+

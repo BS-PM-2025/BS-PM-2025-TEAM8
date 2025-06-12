@@ -1,0 +1,44 @@
+{% extends "ci_cd/base.html" %}
+{% block content %}
+
+<div class="form-container">
+    <h2>➕ Add New Question</h2>
+    <p><strong>Quiz:</strong> {{ quiz.title }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-tile alt">➕ Add Question</button>
+    </form>
+
+    <a href="{% url 'instructor_quizzes' %}" class="btn-tile alt">⬅ Back to Quiz List</a>
+</div>
+
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 40px auto;
+        background: #ffffff;
+        border: 1.5px solid #007bff;
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-top: 5px;
+        font-size: 16px;
+    }
+</style>
+
+{% endblock %}

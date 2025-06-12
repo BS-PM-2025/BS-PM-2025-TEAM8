@@ -74,6 +74,17 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="dashboard-card">
+            <h3>📝 Manage Quizzes</h3>
+            <p>Create and manage quizzes for your modules.</p>
+            <a href="{% url 'create_quiz' %}" class="btn-tile alt">Create New Quiz</a>
+            
+            <h3>📋 Manage Existing Quizzes</h3>
+            <p>View and manage all your quizzes and questions.</p>
+            <a href="{% url 'instructor_quizzes' %}" class="btn-tile alt">Manage Quizzes</a>
+        </div>
+
     </div>
 </div>
 

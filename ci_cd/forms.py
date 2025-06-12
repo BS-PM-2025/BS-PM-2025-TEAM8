@@ -4,7 +4,7 @@ from .models import User , Repository,Profile,Module,Exercise,Notification
 from django.contrib.auth import get_user_model
 import re
 from django.forms import ModelForm
-
+from .models import Quiz, QuizQuestion
 
 
 User = get_user_model()
@@ -107,3 +107,15 @@ class NotificationForm(forms.ModelForm):
     class Meta:
         model = Notification
         fields = ['receiver', 'message']
+
+
+
+class QuizForm(forms.ModelForm):
+    class Meta:
+        model = Quiz
+        fields = ['module', 'title', 'description']
+
+class QuizQuestionForm(forms.ModelForm):
+    class Meta:
+        model = QuizQuestion
+        fields = ['question_text', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_option']
