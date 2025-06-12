@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import UserRegistrationForm, LoginForm ,RepositoryForm,ModuleForm,ExerciseForm,CodePushForm,TestFileForm,EditProfileForm,NotificationForm,QuizForm, QuizQuestionForm
+from .forms import UserRegistrationForm, LoginForm ,RepositoryForm,ModuleForm,ExerciseForm,CodePushForm,TestFileForm,EditProfileForm,NotificationForm,QuizForm, QuizQuestionForm ,ReviewForm
 from django.contrib.auth.decorators import login_required
 from .models import Module, Enrollment , Repository ,Progress , Exercise ,Profile,Module,Notification,Quiz, QuizQuestion
 from django.contrib import messages
@@ -285,19 +285,34 @@ def module_detail_view(request, module_id):
 def module_detail_view(request, module_id):
     module = get_object_or_404(Module, id=module_id)
     exercises = module.exercises.all()
-    completed_ids = Progress.objects.filter(user=request.user, completed=True, exercise__in=exercises).values_list("exercise_id", flat=True)
+    completed_ids = Progress.objects.filter(
+        user=request.user,
+        completed=True,
+        exercise__in=exercises
+    ).values_list("exercise_id", flat=True)
+
+    # Reviews section
+    reviews = module.reviews.all().order_by('-created_at')
+    form = None
+
+    if request.user.is_instructor is False:  # Only students can review
+        from .forms import ReviewForm
+        form = ReviewForm(request.POST or None)
+        if request.method == "POST" and form.is_valid():
+            review = form.save(commit=False)
+            review.module = module
+            review.user = request.user
+            review.save()
+            messages.success(request, "✅ Your review has been submitted.")
+            return redirect("module_detail", module_id=module_id)
 
     return render(request, "ci_cd/module_detail.html", {
         "module": module,
         "exercises": exercises,
         "completed_ids": completed_ids,
+        "reviews": reviews,
+        "review_form": form,
     })
-
-
-
-
-
-
 
 @login_required
 def mark_exercise_complete(request, exercise_id):
@@ -746,3 +761,20 @@ def usage_report(request):
         "total_repositories": total_repositories,
         "total_quizzes": total_quizzes
     })
+
+
+@login_required
+def add_review(request, module_id):
+    module = get_object_or_404(Module, id=module_id)
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.module = module
+            review.user = request.user
+            review.save()
+            messages.success(request, "Review submitted successfully!")
+            return redirect('module_detail', module_id=module_id)
+    else:
+        form = ReviewForm()
+    return render(request, "ci_cd/add_review.html", {"form": form, "module": module})

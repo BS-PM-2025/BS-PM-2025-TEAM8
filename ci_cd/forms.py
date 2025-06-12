@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 import re
 from django.forms import ModelForm
 from .models import Quiz, QuizQuestion
+from .models import Review
 
 
 User = get_user_model()
@@ -119,3 +120,9 @@ class QuizQuestionForm(forms.ModelForm):
     class Meta:
         model = QuizQuestion
         fields = ['question_text', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_option']
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['rating', 'comment']
