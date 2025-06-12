@@ -50,6 +50,6 @@ urlpatterns = [
     path('admin_panel/', views.admin_dashboard, name='admin_dashboard'),
     path('approve_module/<int:module_id>/', views.approve_module, name='approve_module'),
     path('reject_module/<int:module_id>/', views.reject_module, name='reject_module'),
-
+    path('admin_panel/usage_report/', views.usage_report, name='usage_report'),
 
 ]

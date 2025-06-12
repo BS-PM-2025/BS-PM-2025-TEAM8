@@ -726,3 +726,23 @@ def admin_dashboard(request):
         "users": users,
         "modules": modules
     })
+
+
+@login_required
+@admin_required
+def usage_report(request):
+    total_students = User.objects.filter(is_instructor=False, is_superuser=False).count()
+    total_instructors = User.objects.filter(is_instructor=True).count()
+    total_modules = Module.objects.count()
+    total_exercises = Exercise.objects.count()
+    total_repositories = Repository.objects.count()
+    total_quizzes = Quiz.objects.count()
+
+    return render(request, "ci_cd/usage_report.html", {
+        "total_students": total_students,
+        "total_instructors": total_instructors,
+        "total_modules": total_modules,
+        "total_exercises": total_exercises,
+        "total_repositories": total_repositories,
+        "total_quizzes": total_quizzes
+    })
