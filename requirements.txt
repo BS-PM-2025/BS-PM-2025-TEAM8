@@ -1,7 +1,7 @@
-﻿asgiref==3.8.1
+﻿asgiref>=3.7.2,<4
 certifi==2025.1.31
 charset-normalizer==3.4.1
-Django==5.1.7
+Django==5.0.6
 django-debug-toolbar==5.1.0
 django-extensions==3.2.3
 idna==3.10

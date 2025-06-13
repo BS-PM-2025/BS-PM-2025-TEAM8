@@ -2,7 +2,7 @@ from django.test import TestCase,Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from ci_cd.models import Module, Exercise, Repository, Enrollment, Progress,Notification,Profile
+from ci_cd.models import Module, Exercise, Repository, Enrollment, Progress,Notification,Profile, Quiz, Review, QuizQuestion
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.utils import override_settings
 from django.test.utils import override_settings
@@ -272,3 +272,115 @@ class NotificationFeatureTests(TestCase):
         Notification.objects.filter(receiver=self.student, read=False).update(read=True)
         unread_count = Notification.objects.filter(receiver=self.student, read=False).count()
         self.assertEqual(unread_count, 0)
+
+
+class TrackStudentPointsTests(TestCase):
+    def test_points_increment_on_exercise_completion(self):
+        user = User.objects.create_user(username='student', password='pass')
+        module = Module.objects.create(title='Test Module', description='...')
+        exercise = Exercise.objects.create(module=module, title='Ex1', description='...', difficulty=2, steps='...', solution='...')
+        Enrollment.objects.create(user=user, module=module)
+
+        client = Client()
+        client.login(username='student', password='pass')
+        client.get(reverse('mark_complete', args=[exercise.id]))
+
+        progress = Progress.objects.get(user=user, exercise=exercise)
+        self.assertTrue(progress.completed)
+        self.assertEqual(progress.score, 20)
+
+class LeaderboardTests(TestCase):
+    def test_leaderboard_and_user_rank(self):
+        user1 = User.objects.create_user(username='topper', password='pass')
+        user2 = User.objects.create_user(username='lowrank', password='pass')
+        module = Module.objects.create(title='M', description='d')
+        exercise = Exercise.objects.create(title='Ex', module=module, difficulty=1, description='d', steps='s', solution='sol')
+        Progress.objects.create(user=user1, exercise=exercise, completed=True, score=100)
+        Progress.objects.create(user=user2, exercise=exercise, completed=True, score=10)
+
+        client = Client()
+        client.login(username='lowrank', password='pass')
+        response = client.get(reverse('dashboard'))
+
+        self.assertContains(response, 'lowrank')
+        self.assertContains(response, 'topper')
+
+#--------sprint 3 tests----------#
+
+class QuizFeatureTests(TestCase):
+    def test_create_and_take_quiz(self):
+        instructor = User.objects.create_user(username='inst', password='pass', is_instructor=True)
+        student = User.objects.create_user(username='stud', password='pass')
+        module = Module.objects.create(title='Mod1', description='desc')
+        quiz = Quiz.objects.create(module=module, title='Quiz1')
+        question = QuizQuestion.objects.create(quiz=quiz, question_text='Q1', option_a='A', option_b='B', option_c='C', option_d='D', correct_option='A')
+        Enrollment.objects.create(user=student, module=module)
+
+        client = Client()
+        client.login(username='stud', password='pass')
+        client.post(reverse('take_quiz', args=[quiz.id]), {
+            f'question_{question.id}': 'A'
+        })
+
+        progress = Progress.objects.get(user=student, quiz=quiz)
+        self.assertEqual(progress.quiz_score, 100)
+
+class CourseCompletionMessageTests(TestCase):
+    def test_completion_message_only_after_all_modules(self):
+        user = User.objects.create_user(username='student', password='pass')
+        module = Module.objects.create(title='Mod', description='desc')
+        exercise = Exercise.objects.create(module=module, title='Ex', description='d', difficulty=1, steps='s', solution='sol')
+        Enrollment.objects.create(user=user, module=module)
+
+        client = Client()
+        client.login(username='student', password='pass')
+        response = client.get(reverse('dashboard'))
+        self.assertNotContains(response, 'Course Completed')
+
+class ReviewTests(TestCase):
+    def test_review_submission_only_after_completion(self):
+        user = User.objects.create_user(username='student', password='pass')
+        module = Module.objects.create(title='M', description='desc')
+        client = Client()
+        client.login(username='student', password='pass')
+        response = client.post(reverse('add_review', args=[module.id]), {
+            'rating': 5,
+            'comment': 'Great!'
+        })
+        self.assertEqual(Review.objects.count(), 1)
+
+class AdminUserManagementTests(TestCase):
+    def test_admin_can_edit_and_assign_roles(self):
+        admin = User.objects.create_superuser(username='admin', password='pass', email='admin@a.com')
+        client = Client()
+        client.login(username='admin', password='pass')
+        response = client.get(reverse('manage_users'))
+        self.assertEqual(response.status_code, 200)
+
+class ModuleApprovalTests(TestCase):
+    def test_admin_approves_module_and_hide_unapproved(self):
+        admin = User.objects.create_superuser(username='admin', password='pass', email='admin@a.com')
+        module = Module.objects.create(title='Unapproved', description='desc')
+        client = Client()
+        client.login(username='admin', password='pass')
+        client.get(reverse('approve_module', args=[module.id]))
+        module.refresh_from_db()
+        self.assertTrue(module.is_approved)
+
+class GitHubIntegrationTests(TestCase):
+    def test_repo_creation_view_renders(self):
+        user = User.objects.create_user(username='student', password='pass')
+        client = Client()
+        client.login(username='student', password='pass')
+        response = client.get(reverse('create_repository'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Repository')
+
+class UsageReportTests(TestCase):
+    def test_admin_can_generate_usage_report(self):
+        admin = User.objects.create_superuser(username='admin', password='pass', email='admin@a.com')
+        client = Client()
+        client.login(username='admin', password='pass')
+        response = client.get(reverse('usage_report'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Total')

@@ -39,6 +39,32 @@
     {% else %}
     <p>No exercises available yet.</p>
     {% endif %}
+
+    <hr style="margin: 40px 0;">
+    <h3>📝 Student Reviews</h3>
+
+    {% if reviews %}
+        {% for review in reviews %}
+        <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 16px; border-radius: 10px; background: #f9f9f9;">
+            <strong>{{ review.user.username }}</strong> rated {{ review.rating }} ★<br>
+            <p>{{ review.comment }}</p>
+            <small><em>{{ review.created_at|date:"Y-m-d H:i" }}</em></small>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No reviews yet. Be the first to review this module!</p>
+    {% endif %}
+
+    {% if review_form %}
+    <div style="margin-top: 40px;">
+        <h4>Leave a Review</h4>
+        <form method="POST">
+            {% csrf_token %}
+            {{ review_form.as_p }}
+            <button type="submit" class="btn-complete">Submit Review</button>
+        </form>
+    </div>
+    {% endif %}
 </div>
 
 <style>

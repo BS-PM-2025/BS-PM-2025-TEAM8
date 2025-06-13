@@ -51,5 +51,8 @@ urlpatterns = [
     path('approve_module/<int:module_id>/', views.approve_module, name='approve_module'),
     path('reject_module/<int:module_id>/', views.reject_module, name='reject_module'),
     path('admin_panel/usage_report/', views.usage_report, name='usage_report'),
-
+    path("privacy/", views.privacy_policy_view, name="privacy_policy"),
+    path('module/<int:module_id>/review/', views.add_review, name='add_review'),
+    path('admin/modules/', views.manage_modules, name='manage_modules'),
+    path('manage_users/', views.manage_users, name='manage_users'),
 ]

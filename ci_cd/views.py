@@ -778,3 +778,10 @@ def add_review(request, module_id):
     else:
         form = ReviewForm()
     return render(request, "ci_cd/add_review.html", {"form": form, "module": module})
+
+
+def privacy_policy_view(request):
+    return HttpResponse("This is the privacy policy.")
+
+def privacy_policy_view(request):
+    return render(request, 'privacy_policy.html')
